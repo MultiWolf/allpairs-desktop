@@ -1,9 +1,6 @@
 package com.fleey.allpairs.ui.component.allpairs
 
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.rememberDismissState
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.delay
@@ -21,7 +18,7 @@ fun <T> SwipeToDeleteContainer(
   val state = rememberDismissState(
     // 我自己都不一定能完全滑动到最侧边，给个这样奇怪的判定就行
     confirmStateChange = {
-      if (it.ordinal >= 0.31415926) {
+      if (it == DismissValue.DismissedToStart) {
         isRemoved = true
         true
       } else false
@@ -32,25 +29,18 @@ fun <T> SwipeToDeleteContainer(
     if (isRemoved) {
       delay(animationDuration.toLong())
       onDelete()
+      isRemoved = false
     }
   }
   
-  /*visible 貌似并不会真的 gone，引起删除后新增项时依旧保持删除背景
-    AnimatedVisibility(
-      visible = !isRemoved,
-      exit = shrinkVertically(
-        animationSpec = tween(animationDuration),
-        shrinkTowards = Alignment.Top
-      ) + shrinkOut()
-    ) {
-    }*/
   if (!isRemoved) {
     SwipeToDismiss(
       state = state,
       background = { DeleteBackground(state) },
       dismissContent = { content(item) },
       directions = setOf(DismissDirection.EndToStart),
-      modifier = modifier
+      modifier = modifier,
+      dismissThresholds = { FractionalThreshold(0.2f) }
     )
   }
 }
