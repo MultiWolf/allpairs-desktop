@@ -1,12 +1,10 @@
 package com.fleey.allpairs.ui.component.allpairs
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.material.*
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.delay
 
@@ -14,45 +12,42 @@ import kotlinx.coroutines.delay
 @Composable
 fun <T> SwipeToDeleteContainer(
   item: T,
-  onDelete: (T) -> Unit,
+  onDelete: () -> Unit,
   modifier: Modifier = Modifier,
-  animationDuration: Int = 500,
+  animationDuration: Int = 300,
   content: @Composable (T) -> Unit
 ) {
-  var isRemoved by remember {
-    mutableStateOf(false)
-  }
+  var isRemoved by remember { mutableStateOf(false) }
   val state = rememberDismissState(
-    confirmStateChange = { dismissValue ->
-      if (dismissValue == DismissValue.DismissedToStart) {
+    // 我自己都不一定能完全滑动到最侧边，给个这样奇怪的判定就行
+    confirmStateChange = {
+      if (it.ordinal >= 0.31415926) {
         isRemoved = true
         true
       } else false
-      // 包含滑动的方向信息，松手时触发执行
     }
-    //positionalThreshold = {
-    //      // 滑动到什么位置会改变状态
-    //      it / 2
-    //}
   )
   
-  LaunchedEffect(key1 = isRemoved) {
+  LaunchedEffect(isRemoved) {
     if (isRemoved) {
       delay(animationDuration.toLong())
-      onDelete(item)
+      onDelete()
     }
   }
   
-  AnimatedVisibility(
-    visible = !isRemoved,
-    exit = shrinkVertically(
-      animationSpec = tween(durationMillis = animationDuration),
-      shrinkTowards = Alignment.Top
-    ) + fadeOut()
-  ) {
+  /*visible 貌似并不会真的 gone，引起删除后新增项时依旧保持删除背景
+    AnimatedVisibility(
+      visible = !isRemoved,
+      exit = shrinkVertically(
+        animationSpec = tween(animationDuration),
+        shrinkTowards = Alignment.Top
+      ) + shrinkOut()
+    ) {
+    }*/
+  if (!isRemoved) {
     SwipeToDismiss(
       state = state,
-      background = { DeleteBackground(swipeDismissState = state) },
+      background = { DeleteBackground(state) },
       dismissContent = { content(item) },
       directions = setOf(DismissDirection.EndToStart),
       modifier = modifier

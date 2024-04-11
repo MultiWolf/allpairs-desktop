@@ -22,7 +22,7 @@ dependencies {
   implementation(compose.desktop.currentOs)
   implementation(compose.materialIconsExtended)
   implementation("io.github.pavelicii:allpairs4j:1.0.1")
-  // implementation(project("library"))
+  implementation(project("library"))
 }
 
 compose.desktop {

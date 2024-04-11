@@ -1,5 +1,6 @@
 plugins {
   kotlin("jvm")
+  id("org.jetbrains.compose")
 }
 
 group = "com.fleey.allpairs"

@@ -12,13 +12,14 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.fleey.allpairs.data.entity.Param
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScaffold(
   isDark: Boolean,
   toggleTheme: () -> Unit,
-  onFabClick: () -> Unit,
+  onFabClick: (Param?) -> Unit,
   pagerState: PagerState,
   content: @Composable (PaddingValues) -> Unit
 ) {
@@ -33,7 +34,7 @@ fun MainScaffold(
     floatingActionButton = {
       if (pagerState.currentPage == 0) {
         FloatingActionButton(
-          onClick = onFabClick,
+          onClick = { onFabClick(null) },
           modifier = Modifier.padding(32.dp, 64.dp)
         ) {
           Icon(imageVector = Icons.Default.Add, contentDescription = "Add Param")

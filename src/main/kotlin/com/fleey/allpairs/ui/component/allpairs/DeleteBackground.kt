@@ -28,7 +28,7 @@ fun DeleteBackground(
       DismissDirection.EndToStart -> Color.Red
       DismissDirection.StartToEnd -> Color.Transparent
       else -> Color.Transparent
-    }, label = ""
+    }
   )
   
   Box(
@@ -38,6 +38,6 @@ fun DeleteBackground(
       .padding(16.dp),
     contentAlignment = Alignment.CenterEnd
   ) {
-    Icon(imageVector = Icons.Default.Delete, contentDescription = null, tint = Color.White)
+    Icon(imageVector = Icons.Default.Delete, contentDescription = "delete icon", tint = Color.White)
   }
 }

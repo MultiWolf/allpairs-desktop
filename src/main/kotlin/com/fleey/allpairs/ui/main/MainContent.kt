@@ -1,13 +1,16 @@
 package com.fleey.allpairs.ui.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,7 +30,7 @@ import kotlinx.coroutines.launch
 fun MainContent(
   paramList: List<Param>,
   pagerState: PagerState,
-  onUpdateParam: (Int, Param) -> Unit,
+  onUpdateParam: (Param) -> Unit,
   onRemoveParam: (Int) -> Unit,
   modifier: Modifier = Modifier,
 ) {
@@ -38,30 +41,22 @@ fun MainContent(
     userScrollEnabled = false
   ) { page ->
     when (page) {
-      0 -> {
-        EditPage(
-          paramList = paramList,
-          onUpdateParam = onUpdateParam,
-          onRemoveParam = onRemoveParam,
-          onGenerateClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-          modifier = Modifier.fillMaxSize().then(modifier)
-        )
-      }
+      0 -> EditPage(
+        paramList, onUpdateParam, onRemoveParam,
+        { scope.launch { pagerState.animateScrollToPage(1) } },
+        modifier
+      )
       
-      1 -> {
-        ResultPage(
-          paramList = paramList,
-          modifier = Modifier.fillMaxSize()
-        )
-      }
+      1 -> ResultPage(paramList, modifier.fillMaxSize())
     }
   }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EditPage(
   paramList: List<Param>,
-  onUpdateParam: (Int, Param) -> Unit,
+  onUpdateParam: (Param) -> Unit,
   onRemoveParam: (Int) -> Unit,
   onGenerateClick: () -> Unit,
   modifier: Modifier = Modifier,
@@ -71,28 +66,28 @@ fun EditPage(
       .fillMaxSize()
       .then(modifier)
   ) {
-    Column(
-      Modifier.fillMaxHeight().weight(1f).verticalScroll(rememberScrollState()),
-      verticalArrangement = Arrangement.spacedBy(8.dp)
+    LazyColumn(
+      Modifier.fillMaxHeight().weight(1f),
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+      state = rememberLazyListState()
     ) {
-      paramList.forEachIndexed { index, param ->
+      items(items = paramList, key = { item -> item.id }) { param ->
         SwipeToDeleteContainer(
           item = param,
-          onDelete = { onRemoveParam(index) },
           content = {
             ParamItem(
               param = param,
-              onUpdate = { onUpdateParam(index, it) },
-              paramNumber = index + 1,
-              modifier = Modifier.fillMaxWidth()
+              onUpdate = { onUpdateParam(it) },
             )
           },
+          onDelete = { onRemoveParam(param.id) },
+          modifier = Modifier.animateItemPlacement()
         )
       }
     }
     Button(
       onClick = onGenerateClick,
-      modifier = Modifier.fillMaxWidth()
+      modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {
       Text("生成")
     }
@@ -108,15 +103,21 @@ fun ResultPage(
     Text("因子不合法，请检查！")
     return
   }
+  
   val headers = listOf("序号") + paramList.map { it.name }
   val allPairs = AllPairs.AllPairsBuilder().withParameters(paramList.toParameters()).build()
   val bodyData = allPairs.toBodyData()
   
-  Column(modifier = modifier) {
-    Table(row = bodyData.size, col = headers.size, headerData = headers) { row, col ->
-      when (col) {
-        0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
-        else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
+  Surface(
+    modifier = modifier.background(MaterialTheme.colors.surface),
+    elevation = 1.dp
+  ) {
+    Column {
+      Table(row = bodyData.size, col = headers.size, headerData = headers) { row, col ->
+        when (col) {
+          0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
+          else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
+        }
       }
     }
   }

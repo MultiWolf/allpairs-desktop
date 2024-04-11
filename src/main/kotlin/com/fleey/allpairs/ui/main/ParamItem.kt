@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -17,8 +17,6 @@ import com.fleey.allpairs.data.entity.Param
 fun ParamItem(
   param: Param,
   onUpdate: (Param) -> Unit,
-  paramNumber: Int,
-  modifier: Modifier
 ) {
   var name by remember { mutableStateOf(param.name) }
   var values by remember { mutableStateOf(param.values.joinToString(" ")) }
@@ -29,7 +27,7 @@ fun ParamItem(
   
   LaunchedEffect(name, values) { onUpdate(param.copy(name = name, values = splitValues)) }
   
-  Card(modifier = Modifier.padding(8.dp)) {
+  Surface(elevation = 1.dp) {
     FlowRow(
       Modifier.padding(8.dp),
       horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -38,7 +36,7 @@ fun ParamItem(
       OutlinedTextField(
         value = name,
         onValueChange = { name = it },
-        label = { Text("因子 $paramNumber") },
+        label = { Text("因子 ${param.id + 1}") },
         singleLine = true,
         placeholder = { Text("因子名") },
         isError = !isNameValid,

@@ -1,13 +1,8 @@
 package com.fleey.allpairs.ui.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.*
 import com.fleey.allpairs.data.entity.Param
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -16,31 +11,37 @@ fun AppMain(
   isDark: Boolean,
   toggleTheme: () -> Unit
 ) {
-  val paramList: MutableList<Param> = remember {
-    mutableStateListOf<Param>().apply {
-      add(Param("因子1", sortedSetOf("a", "b", "c")))
-      add(Param("因子2", sortedSetOf("d", "e", "f")))
-    }
+  val paramList: MutableList<Param> = remember { mutableStateListOf() }
+  var paramIndex by remember { mutableStateOf(0) }
+  
+  val onFabClick: (Param?) -> Unit = {
+    val param = it ?: Param(paramIndex, "因子${paramIndex + 1}")
+    paramIndex++
+    paramList.add(param)
+    Unit
   }
   
-  val onFabClick = {
-    paramList.add(Param())
-    Unit
+  // init Params
+  LaunchedEffect(true) {
+    repeat(2) { onFabClick(null) }
+  }
+  
+  val onRemoveParam: (Int) -> Unit = {
+    paramList.removeAt(it)
+    paramIndex--
+    paramList.subList(it, paramList.size).forEachIndexed { i, param ->
+      paramList[it + i] = param.copy(id = it + i, name = "因子${it + i + 1}")
+    }
   }
   
   val pagerState = rememberPagerState { 2 }
   
-  MainScaffold(isDark, toggleTheme, onFabClick, pagerState) { pading ->
+  MainScaffold(isDark, toggleTheme, onFabClick, pagerState) {
     MainContent(
-      modifier = Modifier.padding(16.dp).padding(pading),
       paramList = paramList,
       pagerState = pagerState,
-      onUpdateParam = { index, it ->
-        paramList[index] = it
-      },
-      onRemoveParam = { index ->
-        paramList.removeAt(index)
-      }
+      onUpdateParam = { paramList[it.id] = it },
+      onRemoveParam = onRemoveParam
     )
   }
 }
