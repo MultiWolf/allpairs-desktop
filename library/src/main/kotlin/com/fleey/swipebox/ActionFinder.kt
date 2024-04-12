@@ -13,9 +13,7 @@ internal data class ActionFinder(
 ) {
   
   fun actionAt(offset: Float, totalWidth: Int): SwipeActionMeta? {
-    if (offset == 0f) {
-      return null
-    }
+    if (offset == 0f) return null
     
     val isOnRightSide = offset < 0f
     val actions = if (isOnRightSide) right else left
