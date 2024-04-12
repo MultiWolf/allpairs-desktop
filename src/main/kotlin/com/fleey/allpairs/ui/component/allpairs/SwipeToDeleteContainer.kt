@@ -16,7 +16,6 @@ fun <T> SwipeToDeleteContainer(
 ) {
   var isRemoved by remember { mutableStateOf(false) }
   val state = rememberDismissState(
-    // 我自己都不一定能完全滑动到最侧边，给个这样奇怪的判定就行
     confirmStateChange = {
       if (it == DismissValue.DismissedToStart) {
         isRemoved = true
