@@ -13,7 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -78,7 +78,7 @@ fun EditPage(
     ) {
       items(paramList, key = { item -> item.random }) { item ->
         val deleteItemAction = SwipeAction(
-          icon = rememberVectorPainter(Icons.Default.Delete),
+          icon = rememberVectorPainter(Icons.Rounded.Delete),
           background = Color.Red,
           onClick = { onRemoveParam(item.id) }
         )
@@ -123,19 +123,32 @@ fun ResultPage(
   val allPairs = AllPairs.AllPairsBuilder().withParameters(paramList.toParameters()).build()
   val bodyData = allPairs.toBodyData()
   
-  Surface(
-    modifier = modifier.background(MaterialTheme.colors.surface),
-    elevation = 1.dp
+  Column(
+    modifier = Modifier.fillMaxSize()
   ) {
-    Table(
-      row = bodyData.size,
-      col = headers.size,
-      headerData = headers,
-    ) { row, col ->
-      when (col) {
-        0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
-        else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
+    Surface(
+      modifier = modifier
+        .fillMaxHeight()
+        .weight(1f)
+        .background(MaterialTheme.colors.surface),
+      elevation = 1.dp
+    ) {
+      Table(
+        row = bodyData.size,
+        col = headers.size,
+        headerData = headers,
+      ) { row, col ->
+        when (col) {
+          0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
+          else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
+        }
       }
+    }
+    Button(
+      onClick = {},
+      modifier = Modifier.fillMaxWidth().padding(8.dp)
+    ) {
+      Text("导出")
     }
   }
 }

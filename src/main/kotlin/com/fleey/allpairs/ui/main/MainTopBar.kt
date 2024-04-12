@@ -7,9 +7,9 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.DarkMode
+import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -38,13 +38,13 @@ fun MainTopBar(
         IconButton(
           onClick = { scope.launch { pagerState.animateScrollToPage(0) } }
         ) {
-          Icon(Icons.Default.ArrowBack, "back")
+          Icon(Icons.Rounded.ArrowBack, "back")
         }
       }
     },
     actions = {
       IconButton(onClick = toggleTheme) {
-        val icon = if (isDark) Icons.Default.LightMode else Icons.Default.DarkMode
+        val icon = if (isDark) Icons.Rounded.LightMode else Icons.Rounded.DarkMode
         
         Icon(icon, contentDescription = "Toggle Light/Dark Theme")
       }

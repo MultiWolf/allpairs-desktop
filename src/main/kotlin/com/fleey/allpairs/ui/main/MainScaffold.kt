@@ -8,7 +8,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,7 +37,7 @@ fun MainScaffold(
           onClick = { onFabClick(null) },
           modifier = Modifier.padding(32.dp, 64.dp)
         ) {
-          Icon(imageVector = Icons.Default.Add, contentDescription = "Add Param")
+          Icon(imageVector = Icons.Rounded.Add, contentDescription = "Add Param")
         }
       }
     },
