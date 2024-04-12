@@ -17,8 +17,6 @@
 
 package com.fleey.dataroom
 
-class MainTest {
-  /**
-   * God, please forgive me for being such a lazy groundhog.
-   */
-}
+/**
+ * God, please forgive me for being such a lazy groundhog.
+ */
