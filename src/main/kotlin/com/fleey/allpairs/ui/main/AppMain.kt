@@ -11,7 +11,7 @@ fun AppMain(
   isDark: Boolean,
   toggleTheme: () -> Unit
 ) {
-  val paramList: MutableList<Param> = remember { mutableStateListOf() }
+  val paramList = remember { mutableStateListOf<Param>() }
   var paramIndex by remember { mutableStateOf(0) }
   
   val onFabClick: (Param?) -> Unit = {
@@ -23,14 +23,17 @@ fun AppMain(
   
   // init Params
   LaunchedEffect(true) {
-    repeat(2) { onFabClick(null) }
+    repeat(2) {
+      val randomValues = ('a'..'z').shuffled().take(3).joinToString(separator = " ")
+      onFabClick(Param(it, "因子${it + 1}", sortedSetOf(randomValues)))
+    }
   }
   
-  val onRemoveParam: (Int) -> Unit = {
-    paramList.removeAt(it)
+  val onRemoveParam: (Int) -> Unit = { removedParamIndex ->
+    paramList.removeAt(removedParamIndex)
     paramIndex--
-    paramList.subList(it, paramList.size).forEachIndexed { i, param ->
-      paramList[it + i] = param.copy(id = it + i, name = "因子${it + i + 1}")
+    for (index in removedParamIndex until paramList.size) {
+      paramList[index] = paramList[index].copy(id = index)
     }
   }
   

@@ -32,9 +32,9 @@ internal fun SwipeDemo() {
     modifier = Modifier
       .fillMaxSize()
   ) {
-    //items务必添加key，否则会造成显示错乱
+    // items 务必添加 key，否则会造成显示错乱
     itemsIndexed(data, key = { index, item -> item.id }) { index, item ->
-      //index和item都是最原始的数据，一旦onDelete和onChange过，index和item就都不准了，因此根据item的id作为唯一标识查找
+      // index 和 item 都是最原始的数据，一旦 onDelete 和 onChange 过，index 和 item 就都不准了，因此根据 item 的 id 作为唯一标识查找
       val delete = SwipeAction(
         icon = rememberVectorPainter(Icons.Default.Delete),
         background = Color.Red,
@@ -50,6 +50,10 @@ internal fun SwipeDemo() {
         resetAfterClick = true,
         iconSize = 20.dp
       )
+      // paramList.subList(it, paramList.size).forEachIndexed { i, param ->
+      //      paramList[it + i] =
+      //        param.copy(id = it + i, name = "因子${it + i + 1}")
+      //    }
       val change2 = SwipeAction(
         icon = rememberVectorPainter(Icons.Default.Add),
         background = Color.Blue,

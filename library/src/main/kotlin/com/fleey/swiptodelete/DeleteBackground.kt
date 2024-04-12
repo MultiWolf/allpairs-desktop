@@ -1,4 +1,4 @@
-package com.fleey.allpairs.ui.component.allpairs
+package com.fleey.swiptodelete
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background

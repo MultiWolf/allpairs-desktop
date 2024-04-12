@@ -12,16 +12,20 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import com.fleey.allpairs.data.entity.Param
-import com.fleey.allpairs.ui.component.allpairs.SwipeToDeleteContainer
 import com.fleey.allpairs.ui.component.allpairs.Table
 import com.fleey.allpairs.util.toParameters
 import com.fleey.allpairs.util.validate
+import com.fleey.swipebox.SwipeAction
+import com.fleey.swipebox.SwipeActionsBox
 import io.github.pavelicii.allpairs4j.AllPairs
 import kotlinx.coroutines.launch
 
@@ -52,7 +56,6 @@ fun MainContent(
   }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EditPage(
   paramList: List<Param>,
@@ -71,18 +74,18 @@ fun EditPage(
       verticalArrangement = Arrangement.spacedBy(8.dp),
       state = rememberLazyListState()
     ) {
-      items(items = paramList, key = { item -> item.id }) { param ->
-        SwipeToDeleteContainer(
-          item = param,
-          content = {
-            ParamItem(
-              param = param,
-              onUpdate = { onUpdateParam(it) },
-            )
-          },
-          onDelete = { onRemoveParam(param.id) },
-          modifier = Modifier.animateItemPlacement()
+      items(paramList, key = { item -> item.random }) { item ->
+        val deleteItemAction = SwipeAction(
+          icon = rememberVectorPainter(Icons.Default.Delete),
+          background = Color.Red,
+          onClick = { onRemoveParam(item.id) }
         )
+        SwipeActionsBox(rightActions = listOf(deleteItemAction)) {
+          ParamItem(
+            param = item,
+            onUpdate = { onUpdateParam(it) },
+          )
+        }
       }
     }
     Button(

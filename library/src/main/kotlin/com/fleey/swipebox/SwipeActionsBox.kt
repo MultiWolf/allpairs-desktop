@@ -24,7 +24,7 @@ fun SwipeActionsBox(
   state: SwipeActionsState = rememberSwipeActionsState(),
   leftActions: List<SwipeAction> = emptyList(),
   rightActions: List<SwipeAction> = emptyList(),
-  swipeThreshold: Dp = 40.dp,
+  swipeThreshold: Dp = 72.dp,
   content: @Composable BoxScope.() -> Unit
 ) {
   BoxWithConstraints(modifier) {

@@ -12,11 +12,11 @@ import androidx.compose.ui.unit.dp
 
 @Stable
 data class SwipeAction(
-  val onClick: () -> Unit,
   val icon: @Composable () -> Unit,
   val background: Color,
   val iconSize: Dp,
-  val resetAfterClick: Boolean
+  val resetAfterClick: Boolean,
+  val onClick: () -> Unit
 )
 
 @Composable
