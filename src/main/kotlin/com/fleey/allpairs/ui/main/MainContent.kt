@@ -16,10 +16,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.fleey.allpairs.data.entity.Param
 import com.fleey.allpairs.ui.component.allpairs.Table
 import com.fleey.allpairs.util.toParameters
@@ -103,7 +105,17 @@ fun ResultPage(
   modifier: Modifier = Modifier
 ) {
   if (!paramList.validate()) {
-    Text("因子不合法，请检查！")
+    Column(
+      modifier = Modifier.fillMaxSize(),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+      Text(
+        text = "因子不合法，请检查",
+        color = MaterialTheme.colors.error,
+        fontSize = 20.sp
+      )
+    }
     return
   }
   
@@ -115,12 +127,14 @@ fun ResultPage(
     modifier = modifier.background(MaterialTheme.colors.surface),
     elevation = 1.dp
   ) {
-    Column {
-      Table(row = bodyData.size, col = headers.size, headerData = headers) { row, col ->
-        when (col) {
-          0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
-          else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
-        }
+    Table(
+      row = bodyData.size,
+      col = headers.size,
+      headerData = headers,
+    ) { row, col ->
+      when (col) {
+        0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
+        else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
       }
     }
   }

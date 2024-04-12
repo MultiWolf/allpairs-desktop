@@ -1,10 +1,10 @@
 package com.fleey.allpairs.ui.component.allpairs
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Table(
   modifier: Modifier = Modifier,
@@ -34,100 +35,75 @@ fun Table(
   headerRow: @Composable ((Int) -> Unit)? = null,
   dataRow: @Composable (Int, Int) -> Unit
 ) {
-  val selectionState = remember { mutableStateOf(-1) }
+  val hScrollState = rememberLazyListState()
   
-  LazyColumn(modifier = modifier, state = rememberLazyListState()) {
-    item {
-      HeaderRow(col, border, borderWidth, headerData, headerRow)
-    }
-    items(row) { rowIndex ->
-      DataRow(
-        rowIndex = rowIndex,
-        col = col,
-        border = border,
-        borderWidth = borderWidth,
-        stripe = stripe,
-        dataRowHeight = dataRowHeight,
-        isSelected = selectionState.value == rowIndex,
-        onRowSelected = { selected ->
-          selectionState.value = if (selected) rowIndex else -1
-          onRowSelected?.invoke(rowIndex, selected)
-        },
-        dataRow = dataRow
-      )
-    }
-  }
-}
-
-@Composable
-private fun HeaderRow(
-  col: Int,
-  border: Boolean,
-  borderWidth: Dp,
-  headerData: List<String>,
-  headerRow: @Composable ((Int) -> Unit)?
-) {
-  LazyRow {
-    items(col) { colIndex ->
-      TableCell(border, borderWidth) {
-        headerRow?.invoke(colIndex) ?: Text(
-          headerData[colIndex],
-          style = MaterialTheme.typography.subtitle1,
-          color = Color.Gray
-        )
-      }
-    }
-  }
-  if (!border) {
-    Divider(modifier = Modifier.fillMaxWidth(), color = Color.LightGray)
-  }
-}
-
-@Composable
-private fun DataRow(
-  rowIndex: Int,
-  col: Int,
-  border: Boolean,
-  borderWidth: Dp,
-  stripe: Boolean,
-  dataRowHeight: Dp,
-  isSelected: Boolean,
-  onRowSelected: (Boolean) -> Unit,
-  dataRow: @Composable (Int, Int) -> Unit
-) {
-  val backgroundColor =
-    if (isSelected) Color.Gray.copy(alpha = if (stripe) 0.382f else 0.191f) else MaterialTheme.colors.background
+  val selectedRowIndex = remember { mutableStateOf(-1) }
   
-  Row(
-    modifier = Modifier.fillMaxWidth().height(dataRowHeight).background(backgroundColor).clickable {
-      onRowSelected(!isSelected)
-    }
+  val rowModifier = Modifier.width(100.dp).height(dataRowHeight)
+  val borderModifier = if (border) Modifier.border(
+    BorderStroke(
+      borderWidth,
+      MaterialTheme.colors.secondary
+    )
+  ) else Modifier
+  
+  LazyColumn(
+    modifier = modifier,
+    state = rememberLazyListState()
   ) {
-    LazyRow {
-      items(col) { colIndex ->
-        TableCell(border, borderWidth) {
-          dataRow(rowIndex, colIndex)
+    stickyHeader {
+      LazyRow(
+        modifier = Modifier.fillMaxWidth().height(dataRowHeight)
+          .background(MaterialTheme.colors.background),
+        state = hScrollState
+      ) {
+        items(col) { colIndex ->
+          Box(
+            modifier = rowModifier.then(borderModifier),
+            contentAlignment = Alignment.Center
+          ) {
+            headerRow?.invoke(colIndex) ?: Text(
+              text = headerData.getOrNull(colIndex).orEmpty(),
+              style = MaterialTheme.typography.subtitle1
+            )
+          }
         }
       }
+      if (!border) Divider(modifier = Modifier.fillMaxWidth(), color = Color.LightGray)
     }
-  }
-  if (!border) {
-    Divider(modifier = Modifier.fillMaxWidth(), color = Color.LightGray)
-  }
-}
-
-@Composable
-private fun TableCell(border: Boolean, borderWidth: Dp, content: @Composable () -> Unit) {
-  val cellModifier = Modifier.width(100.dp).height(30.dp)
-  Box(
-    modifier = if (border) cellModifier.border(
-      BorderStroke(
-        width = borderWidth,
-        color = MaterialTheme.colors.secondary
+    
+    items(row) { rowIndex ->
+      var wholeRowModifier = Modifier.fillMaxWidth().height(dataRowHeight)
+        .clickable {
+          selectedRowIndex.value = if (selectedRowIndex.value == rowIndex) -1 else rowIndex
+          onRowSelected?.invoke(rowIndex, selectedRowIndex.value == rowIndex)
+        }
+      
+      if (stripe && rowIndex % 2 == 1) {
+        wholeRowModifier = wholeRowModifier.background(color = Color.Gray.copy(alpha = 0.191f))
+      }
+      if (selectedRowIndex.value == rowIndex) {
+        wholeRowModifier = wholeRowModifier.background(color = Color.Gray.copy(alpha = 0.382f))
+      }
+      
+      LazyRow(
+        modifier = wholeRowModifier,
+        state = hScrollState,
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        items(col) { colIndex ->
+          Box(
+            modifier = rowModifier.then(borderModifier),
+            contentAlignment = Alignment.Center
+          ) {
+            dataRow.invoke(rowIndex, colIndex)
+          }
+        }
+      }
+      if (!border) Divider(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.LightGray
       )
-    ) else cellModifier,
-    contentAlignment = Alignment.Center
-  ) {
-    content()
+    }
   }
 }
