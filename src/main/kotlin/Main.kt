@@ -5,7 +5,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import com.fleey.allpairs.data.config.AppConfig
+import com.fleey.allpairs.data.config.windowMinHeight
+import com.fleey.allpairs.data.config.windowMinWidth
 import com.fleey.allpairs.ui.common.theme.AppTheme
 import com.fleey.allpairs.ui.main.AppMain
 import com.fleey.allpairs.util.EnvType
@@ -20,8 +21,8 @@ import java.awt.Dimension
 fun main() = application {
   val windowState = rememberWindowState(
     size = DpSize(
-      AppConfig.WINDOW_MIN_WIDTH.dp,
-      AppConfig.WINDOW_MIN_HEIGHT.dp
+      windowMinWidth.dp,
+      windowMinHeight.dp
     )
   )
   
@@ -32,7 +33,7 @@ fun main() = application {
     resizable = true,
     undecorated = EnvUtil.isOrderEnvType(EnvType.WINDOWS)
   ) {
-    window.minimumSize = Dimension(AppConfig.WINDOW_MIN_WIDTH, AppConfig.WINDOW_MIN_HEIGHT)
+    window.minimumSize = Dimension(windowMinWidth, windowMinHeight)
     
     App()
   }
