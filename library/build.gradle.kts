@@ -14,9 +14,7 @@ repositories {
 
 dependencies {
   // compose
-  implementation("androidx.compose.runtime:runtime:1.6.5")
-  implementation("androidx.compose.ui:ui:1.6.5")
-  implementation("androidx.compose.foundation:foundation:1.6.5")
+  implementation(compose.desktop.common)
   // protobuf
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf-jvm:1.6.3")
   // coroutines

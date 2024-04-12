@@ -2,12 +2,8 @@ package com.fleey.swipebox
 
 import androidx.compose.foundation.gestures.Orientation.Horizontal
 import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -18,45 +14,43 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun SwipeActionsBox(
   modifier: Modifier = Modifier,
   state: SwipeActionsState = rememberSwipeActionsState(),
-  startActions: List<SwipeAction> = emptyList(),
-  endActions: List<SwipeAction> = emptyList(),
+  leftActions: List<SwipeAction> = emptyList(),
+  rightActions: List<SwipeAction> = emptyList(),
   swipeThreshold: Dp = 40.dp,
   content: @Composable BoxScope.() -> Unit
 ) {
   BoxWithConstraints(modifier) {
-    state.layoutWidth = constraints.maxWidth
-    state.swipeThresholdPx = with(LocalDensity.current) { swipeThreshold.toPx() }
-    
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    state.actions = remember(endActions, startActions, isRtl) {
-      ActionFinder(
-        left = if (isRtl) endActions else startActions,
-        right = if (isRtl) startActions else endActions
-      )
+    state.apply {
+      layoutWidth = constraints.maxWidth
+      swipeThresholdPx = LocalDensity.current.run { swipeThreshold.toPx() }
+      actions = remember(leftActions, rightActions, isRtl) {
+        ActionFinder(
+          left = if (isRtl) rightActions else leftActions,
+          right = if (isRtl) leftActions else rightActions,
+        )
+      }
     }
     
     val scope = rememberCoroutineScope()
-    val offsetX by state.offset
+    val offsetX = state.offset.value.roundToInt()
     
     Box(
       modifier = Modifier
-        .offset { IntOffset(x = offsetX.roundToInt(), y = 0) }
+        .absoluteOffset { IntOffset(x = offsetX, y = 0) }
         .draggable(
           orientation = Horizontal,
           enabled = !state.isResettingOnRelease,
           onDragStopped = {
-            produce<Unit> {
+            scope.launch {
               state.handleOnDragStopped()
             }
           },
@@ -65,43 +59,65 @@ fun SwipeActionsBox(
       content = content
     )
     
-    val actionWidthDp = with(LocalDensity.current) { abs(offsetX).toDp() }
+    val actionWidth = with(LocalDensity.current) { abs(offsetX).toDp() }
+    val actionRowModifier = Modifier.matchParentSize()
     
-    state.actions.right.forEachIndexed { index, action ->
-      ActionIconBox(
-        action = action,
-        actionWidth = actionWidthDp / state.actions.right.size.toFloat(),
-        swipeThreshold = swipeThreshold,
-        onClick = {
-          handleActionClick(action, state, scope)
-        }
-      )
+    val rightActionsCondition = state.actions.right.isNotEmpty() && offsetX < 0
+    val leftActionsCondition = state.actions.left.isNotEmpty() && offsetX > 0
+    
+    if (rightActionsCondition || leftActionsCondition) {
+      val actions = if (rightActionsCondition) state.actions.right else state.actions.left
+      val offset =
+        if (rightActionsCondition) constraints.maxWidth + offsetX else -constraints.maxWidth + offsetX
+      
+      SwipeActionsRow(
+        actions,
+        offset,
+        actionWidth,
+        swipeThreshold,
+        actionRowModifier
+      ) { handleActionClick(it, scope, state) }
     }
-    
-    state.actions.left.forEachIndexed { index, action ->
+  }
+}
+
+@Composable
+private fun SwipeActionsRow(
+  actions: List<SwipeAction>,
+  offsetX: Int,
+  actionWidth: Dp,
+  swipeThreshold: Dp,
+  modifier: Modifier,
+  onClick: (SwipeAction) -> Unit
+) {
+  val actionWidthPerItem = actionWidth / actions.size.toFloat()
+  val arrangement = if (offsetX > 0) Arrangement.Start else Arrangement.End
+  
+  Row(
+    Modifier.absoluteOffset { IntOffset(x = offsetX, y = 0) }.then(modifier),
+    horizontalArrangement = arrangement
+  ) {
+    actions.forEach { action ->
       ActionIconBox(
         action = action,
-        actionWidth = actionWidthDp / state.actions.left.size.toFloat(),
-        swipeThreshold = swipeThreshold,
-        onClick = {
-          handleActionClick(action, state, scope)
-        }
-      )
+        actionWidth = actionWidthPerItem,
+        swipeThreshold = swipeThreshold
+      ) {
+        onClick(action)
+      }
     }
   }
 }
 
 private fun handleActionClick(
   action: SwipeAction,
-  state: SwipeActionsState,
-  scope: CoroutineScope
+  scope: CoroutineScope,
+  state: SwipeActionsState
 ) {
   if (action.resetAfterClick) {
     scope.launch {
       state.handleReset()
       action.onClick()
     }
-  } else {
-    action.onClick()
   }
 }
