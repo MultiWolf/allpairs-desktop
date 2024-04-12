@@ -9,8 +9,6 @@ import com.fleey.allpairs.data.config.windowMinHeight
 import com.fleey.allpairs.data.config.windowMinWidth
 import com.fleey.allpairs.ui.common.theme.AppTheme
 import com.fleey.allpairs.ui.main.AppMain
-import com.fleey.allpairs.util.EnvType
-import com.fleey.allpairs.util.EnvUtil
 import java.awt.Dimension
 
 
@@ -31,7 +29,6 @@ fun main() = application {
     onCloseRequest = ::exitApplication,
     title = "Allpairs",
     resizable = true,
-    undecorated = EnvUtil.isOrderEnvType(EnvType.WINDOWS)
   ) {
     window.minimumSize = Dimension(windowMinWidth, windowMinHeight)
     

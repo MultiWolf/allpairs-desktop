@@ -50,10 +50,6 @@ internal fun SwipeDemo() {
         resetAfterClick = true,
         iconSize = 20.dp
       )
-      // paramList.subList(it, paramList.size).forEachIndexed { i, param ->
-      //      paramList[it + i] =
-      //        param.copy(id = it + i, name = "因子${it + i + 1}")
-      //    }
       val change2 = SwipeAction(
         icon = rememberVectorPainter(Icons.Default.Add),
         background = Color.Blue,
