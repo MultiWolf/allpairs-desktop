@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -17,17 +18,14 @@ import com.fleey.allpairs.data.entity.Param
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScaffold(
-  isDark: Boolean,
-  toggleTheme: () -> Unit,
   onFabClick: (Param?) -> Unit,
   pagerState: PagerState,
   content: @Composable (PaddingValues) -> Unit
 ) {
   Scaffold(
+    backgroundColor = MaterialTheme.colors.background,
     topBar = {
       MainTopBar(
-        isDark = isDark,
-        toggleTheme = toggleTheme,
         pagerState = pagerState
       )
     },

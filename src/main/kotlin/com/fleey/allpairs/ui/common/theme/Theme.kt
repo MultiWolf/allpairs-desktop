@@ -25,6 +25,11 @@ fun AppTheme(
   }
 }*/
 
+val themes = mapOf(
+  false to LightColorPalette,
+  true to DarkColorPalette
+)
+
 @Composable
 fun AppTheme(
   isDark: Boolean = isSystemInDarkTheme(),

@@ -54,7 +54,7 @@ fun Table(
     stickyHeader {
       LazyRow(
         modifier = Modifier.fillMaxWidth().height(dataRowHeight)
-          .background(MaterialTheme.colors.background),
+          .background(MaterialTheme.colors.secondaryVariant),
         state = hScrollState
       ) {
         items(col) { colIndex ->
@@ -65,7 +65,7 @@ fun Table(
             headerRow?.invoke(colIndex) ?: Text(
               text = headerData.getOrNull(colIndex).orEmpty(),
               style = MaterialTheme.typography.subtitle1,
-              color = MaterialTheme.colors.secondaryVariant
+              color = MaterialTheme.colors.primaryVariant
             )
           }
         }

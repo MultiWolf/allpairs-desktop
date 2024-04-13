@@ -9,7 +9,6 @@ import com.fleey.allpairs.data.entity.Param
 @Composable
 fun AppMain(
   isDark: Boolean,
-  toggleTheme: () -> Unit
 ) {
   val paramList = remember { mutableStateListOf<Param>() }
   var paramIndex by remember { mutableStateOf(0) }
@@ -39,7 +38,7 @@ fun AppMain(
   
   val pagerState = rememberPagerState { 2 }
   
-  MainScaffold(isDark, toggleTheme, onFabClick, pagerState) {
+  MainScaffold(onFabClick, pagerState) {
     MainContent(
       isDark,
       paramList = paramList,

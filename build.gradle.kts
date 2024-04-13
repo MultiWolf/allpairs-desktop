@@ -12,6 +12,7 @@ repositories {
   mavenCentral()
   google()
 }
+
 dependencies {
   // compose
   implementation(compose.desktop.currentOs)
@@ -30,9 +31,26 @@ compose.desktop {
     mainClass = "MainKt"
     
     nativeDistributions {
+      jvmArgs("-Dapple.awt.application.appearance=system")
+    }
+    
+    nativeDistributions {
       targetFormats(TargetFormat.Dmg, TargetFormat.Exe, TargetFormat.Deb)
       packageName = "allpairs-desktop"
       packageVersion = "1.0.0"
+    }
+  }
+}
+
+allprojects {
+  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    val optIns = listOf<String>(
+    ).map {
+      "-Xopt-in=$it"
+    }
+    val contextReceivers = "-Xcontext-receivers"
+    kotlinOptions {
+      freeCompilerArgs += optIns + contextReceivers
     }
   }
 }

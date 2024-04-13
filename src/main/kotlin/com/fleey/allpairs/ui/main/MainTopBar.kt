@@ -2,29 +2,24 @@ package com.fleey.allpairs.ui.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.DarkMode
-import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainTopBar(
   modifier: Modifier = Modifier,
-  isDark: Boolean,
-  toggleTheme: () -> Unit,
   pagerState: PagerState,
 ) {
   val scope = rememberCoroutineScope()
   TopAppBar(
+    backgroundColor = MaterialTheme.colors.onSecondary,
     title = {
       val text = when (pagerState.currentPage) {
         1 -> "结果列表"
@@ -42,12 +37,6 @@ fun MainTopBar(
         }
       }
     },
-    actions = {
-      IconButton(onClick = toggleTheme) {
-        val icon = if (isDark) Icons.Rounded.LightMode else Icons.Rounded.DarkMode
-        
-        Icon(icon, contentDescription = "Toggle Light/Dark Theme")
-      }
-    },
+    elevation = 0.dp,
   )
 }
