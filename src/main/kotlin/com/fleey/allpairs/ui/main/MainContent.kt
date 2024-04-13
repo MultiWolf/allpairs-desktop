@@ -193,18 +193,35 @@ private fun ExportTypeListItem(
   ExportType.entries.forEach { exportType ->
     if (exportType == ExportType.NULL) return@forEach
     val exportTypeName = exportType.name.lowercase()
-    val text = when (exportType) {
-      ExportType.TEXT -> "复制至剪贴板"
-      else -> "导出为 $exportTypeName"
-    }
     
-    ListItem(
-      icon = { "ic_export_$exportTypeName.svg".fromResToIcon() },
-      text = { Text(text) },
-      modifier = Modifier.clickable {
-        chosenExportType = exportType
-      }
-    )
+    val text = when (exportType) {
+      ExportType.EXCEL -> "表格（.xlsx）"
+      ExportType.TEXT -> "纯文字"
+      ExportType.MARKDOWN -> "Markdown"
+      else -> ""
+    }
+    val secondaryText = when (exportType) {
+      ExportType.TEXT, ExportType.MARKDOWN -> "复制至剪贴板"
+      else -> null
+    }
+    if (secondaryText != null) {
+      ListItem(
+        icon = { "ic_export_$exportTypeName.svg".fromResToIcon() },
+        text = { Text(text) },
+        secondaryText = { Text(secondaryText) },
+        modifier = Modifier.clickable {
+          chosenExportType = exportType
+        }
+      )
+    } else {
+      ListItem(
+        icon = { "ic_export_$exportTypeName.svg".fromResToIcon() },
+        text = { Text(text) },
+        modifier = Modifier.clickable {
+          chosenExportType = exportType
+        }
+      )
+    }
   }
   
   if (chosenExportType != ExportType.NULL) {

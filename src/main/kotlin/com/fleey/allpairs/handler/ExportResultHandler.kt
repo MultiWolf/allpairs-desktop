@@ -41,6 +41,28 @@ object ExportResultHandler {
         onSuccess()
       }
       
+      ExportType.MARKDOWN -> {
+        val markdownContent = buildString {
+          append("| ")
+          append(headers.joinToString(" | "))
+          append(" |")
+          appendLine()
+          
+          append("|")
+          repeat(headers.size) { append(" ---- |") }
+          appendLine()
+          
+          bodyData.forEach { item ->
+            append("| ")
+            append(item.index)
+            item.values.joinToString(" | ", " | ", " |").also { append(it) }
+            appendLine()
+          }
+        }
+        ClipboardUtil.CopyTextToClipboard(markdownContent)
+        onSuccess()
+      }
+      
       ExportType.NULL -> {}
     }
   }
@@ -49,5 +71,6 @@ object ExportResultHandler {
 enum class ExportType {
   EXCEL,
   TEXT,
+  MARKDOWN,
   NULL
 }
