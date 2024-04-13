@@ -207,14 +207,17 @@ private fun ExportTypeListItem(
     val exportTypeName = exportType.name.lowercase()
     
     val text = when (exportType) {
-      ExportType.EXCEL -> "表格（.xlsx）"
-      ExportType.IMAGE -> "图片(.png)"
+      ExportType.EXCEL -> "表格"
+      ExportType.IMAGE -> "图片"
       ExportType.TEXT -> "纯文字"
       ExportType.MARKDOWN -> "Markdown"
       else -> ""
     }
     val secondaryText = when (exportType) {
-      ExportType.TEXT, ExportType.MARKDOWN -> "复制至剪贴板"
+      ExportType.EXCEL -> "以 .xlsx 类型保存"
+      ExportType.IMAGE -> "以 .png 类型保存"
+      ExportType.TEXT -> "复制内容，可粘贴至 Excel"
+      ExportType.MARKDOWN -> "复制内容，可粘贴至 md 编辑器"
       else -> null
     }
     if (secondaryText != null) {
