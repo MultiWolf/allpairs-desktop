@@ -9,11 +9,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -22,9 +20,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.fleey.allpairs.data.entity.AllPairsItem
 import com.fleey.allpairs.data.entity.Param
+import com.fleey.allpairs.handler.ExportResultHandler
+import com.fleey.allpairs.handler.ExportType
 import com.fleey.allpairs.ui.component.CustomBottomSheet
+import com.fleey.allpairs.ui.component.SaveFileDialog
 import com.fleey.allpairs.ui.component.Table
+import com.fleey.allpairs.util.IconUtil.fromResToIcon
 import com.fleey.allpairs.util.toParameters
 import com.fleey.allpairs.util.validate
 import com.fleey.swipebox.SwipeAction
@@ -133,27 +136,12 @@ fun ResultPage(
   val allPairs = AllPairs.AllPairsBuilder().withParameters(paramList.toParameters()).build()
   val bodyData = allPairs.toBodyData()
   
+  
   val sheetContent: @Composable ColumnScope.() -> Unit = {
     Column {
       ListItem(text = { Text("选择你要导出的方式~") })
       
-      ListItem(
-        text = { Text("github") },
-        icon = {
-          Surface(
-            shape = CircleShape,
-            color = Color(0xFF181717)
-          ) {
-            Icon(
-              Icons.Rounded.Image,
-              null,
-              tint = Color.White,
-              modifier = Modifier.padding(4.dp)
-            )
-          }
-        },
-        modifier = Modifier.clickable { }
-      )
+      ExportTypeListItem(headers, bodyData, scope, bottomSheetState)
     }
   }
   
@@ -189,10 +177,39 @@ fun ResultPage(
   }
 }
 
-data class Item(val index: Int, val values: List<String>)
-
-private fun AllPairs.toBodyData(): List<Item> {
+private fun AllPairs.toBodyData(): List<AllPairsItem> {
   return this.mapIndexed { index, values ->
-    Item(index, values.map { it.toString().substringAfter("=") })
+    AllPairsItem(index, values.map { it.toString().substringAfter("=") })
+  }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun ExportTypeListItem(
+  headers: List<String>,
+  bodyData: List<AllPairsItem>,
+  scope: CoroutineScope,
+  bottomSheetState: ModalBottomSheetState,
+) {
+  SaveFileDialog("File.xls", onFileSelected = {
+    println("$it")
+  }) {}
+  ExportType.entries.forEach {
+    val exportTypeName = it.name.lowercase()
+    val text = when (it) {
+      ExportType.TEXT -> "复制至剪贴板"
+      else -> "导出为 $exportTypeName"
+    }
+    
+    Box {
+      ListItem(
+        icon = { "ic_export_$exportTypeName.svg".fromResToIcon() },
+        text = { Text(text) },
+        modifier = Modifier.clickable {
+          scope.launch { bottomSheetState.hide() }
+        }
+      )
+      ExportResultHandler.exportResultAsOrderType(it, headers, bodyData)
+    }
   }
 }
