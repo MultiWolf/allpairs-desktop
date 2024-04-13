@@ -2,18 +2,18 @@ package com.fleey.allpairs.ui.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -23,15 +23,17 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fleey.allpairs.data.entity.Param
-import com.fleey.allpairs.ui.component.allpairs.Table
+import com.fleey.allpairs.ui.component.CustomBottomSheet
+import com.fleey.allpairs.ui.component.Table
 import com.fleey.allpairs.util.toParameters
 import com.fleey.allpairs.util.validate
 import com.fleey.swipebox.SwipeAction
 import com.fleey.swipebox.SwipeActionsBox
 import io.github.pavelicii.allpairs4j.AllPairs
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun MainContent(
   paramList: List<Param>,
@@ -40,20 +42,25 @@ fun MainContent(
   onRemoveParam: (Int) -> Unit,
   modifier: Modifier = Modifier,
 ) {
+  val resultBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
   val scope = rememberCoroutineScope()
+  
   HorizontalPager(
     state = pagerState,
     modifier = Modifier.fillMaxSize(),
     userScrollEnabled = false
   ) { page ->
     when (page) {
-      0 -> EditPage(
-        paramList, onUpdateParam, onRemoveParam,
-        { scope.launch { pagerState.animateScrollToPage(1) } },
-        modifier
-      )
+      0 -> {
+        EditPage(
+          paramList, onUpdateParam, onRemoveParam,
+          { scope.launch { pagerState.animateScrollToPage(1) } },
+          modifier
+        )
+        scope.launch { resultBottomSheetState.hide() }
+      }
       
-      1 -> ResultPage(paramList, modifier.fillMaxSize())
+      1 -> ResultPage(paramList, modifier.fillMaxSize(), scope, resultBottomSheetState)
     }
   }
 }
@@ -99,10 +106,13 @@ fun EditPage(
   }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ResultPage(
   paramList: List<Param>,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  scope: CoroutineScope,
+  bottomSheetState: ModalBottomSheetState
 ) {
   if (!paramList.validate()) {
     Column(
@@ -123,32 +133,58 @@ fun ResultPage(
   val allPairs = AllPairs.AllPairsBuilder().withParameters(paramList.toParameters()).build()
   val bodyData = allPairs.toBodyData()
   
-  Column(
-    modifier = Modifier.fillMaxSize()
-  ) {
-    Surface(
-      modifier = modifier
-        .fillMaxHeight()
-        .weight(1f)
-        .background(MaterialTheme.colors.surface),
-      elevation = 1.dp
+  val sheetContent: @Composable ColumnScope.() -> Unit = {
+    Column {
+      ListItem(text = { Text("选择你要导出的方式~") })
+      
+      ListItem(
+        text = { Text("github") },
+        icon = {
+          Surface(
+            shape = CircleShape,
+            color = Color(0xFF181717)
+          ) {
+            Icon(
+              Icons.Rounded.Image,
+              null,
+              tint = Color.White,
+              modifier = Modifier.padding(4.dp)
+            )
+          }
+        },
+        modifier = Modifier.clickable { }
+      )
+    }
+  }
+  
+  CustomBottomSheet(bottomSheetState, { sheetContent() }) {
+    Column(
+      modifier = Modifier.fillMaxSize()
     ) {
-      Table(
-        row = bodyData.size,
-        col = headers.size,
-        headerData = headers,
-      ) { row, col ->
-        when (col) {
-          0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
-          else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
+      Surface(
+        modifier = modifier
+          .fillMaxHeight()
+          .weight(1f)
+          .background(MaterialTheme.colors.surface),
+        elevation = 1.dp
+      ) {
+        Table(
+          row = bodyData.size,
+          col = headers.size,
+          headerData = headers,
+        ) { row, col ->
+          when (col) {
+            0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
+            else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
+          }
         }
       }
-    }
-    Button(
-      onClick = {},
-      modifier = Modifier.fillMaxWidth().padding(8.dp)
-    ) {
-      Text("导出")
+      Button(
+        onClick = { scope.launch { bottomSheetState.show() } },
+        modifier = Modifier.fillMaxWidth().padding(8.dp)
+      ) {
+        Text("导出")
+      }
     }
   }
 }

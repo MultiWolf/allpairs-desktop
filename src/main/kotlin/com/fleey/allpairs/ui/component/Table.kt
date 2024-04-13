@@ -1,4 +1,4 @@
-package com.fleey.allpairs.ui.component.allpairs
+package com.fleey.allpairs.ui.component
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Box
