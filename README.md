@@ -6,9 +6,10 @@
 
 # 截图
 
-![image-1](./image/1.png)
-
-![image-2](./image/2.png)
+| 编辑页                               | 结果页                               | 导出页                               |
+|-----------------------------------|-----------------------------------|-----------------------------------|
+| ![image](./image/light/img_1.png) | ![image](./image/light/img_2.png) | ![image](./image/light/img_3.png) |
+| ![image](./image/dark/img_1.png)  | ![image](./image/dark/img_2.png)  | ![image](./image/dark/img_3.png)  |
 
 # 模块
 
@@ -17,9 +18,26 @@
     - library
         - dataroom
         - viewmodel
+        - swipbox
+        - swiptodelete
 
 > `library` 模块中的 `dataroom` 和 `viewmodel` 属实验性库，均未在本 demo
 > 中应用，且未正式发布（不打算发布，若你有想法，那没问题的）。
+
+# 功能
+
+- [x] 侧滑删除
+- [x] 导出结果
+    - [x] 表格
+    - [x] 图片
+    - [x] 纯文字
+    - [x] Markdown
+- [ ] 导出成功询问打开
+- [ ] 导出失败提示
+- [ ] 导入数据
+- [ ] 拖拽排序
+- [ ] 侧滑 - 添加项
+- [ ] 呈现更详细、美观的错误提示
 
 # 一些话
 
@@ -66,6 +84,8 @@ demo。
 可爱小熊 [@ShellWen](https://github.com/ShellWen)
 
 我的学生 @WindC
+
+微软 Fluent icons
 
 第三方库：
 
