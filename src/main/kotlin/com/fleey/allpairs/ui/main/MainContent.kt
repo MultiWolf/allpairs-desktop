@@ -21,13 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fleey.allpairs.data.entity.AllPairsItem
 import com.fleey.allpairs.data.entity.Param
+import com.fleey.allpairs.extender.fromResToIcon
 import com.fleey.allpairs.extender.toParameters
 import com.fleey.allpairs.extender.validate
 import com.fleey.allpairs.handler.ExportResultHandler
 import com.fleey.allpairs.handler.ExportType
 import com.fleey.allpairs.ui.component.CustomBottomSheet
 import com.fleey.allpairs.ui.component.Table
-import com.fleey.allpairs.util.IconUtil.fromResToIcon
 import com.fleey.swipebox.SwipeAction
 import com.fleey.swipebox.SwipeActionsBox
 import io.github.pavelicii.allpairs4j.AllPairs
