@@ -96,12 +96,12 @@ fun exportTableAsImage(
   onSuccess: () -> Unit = {},
   onFailure: (IOException) -> Unit = {},
 ) {
-  val width = headers.sumOf { it.length } * 38
-  val height = bodyData.size * 34
+  val width = headers.sumOf { it.length } * 8.5 + headers.size * 89.7
+  val height = bodyData.size * 33.9
   
   val scene = ImageComposeScene(
-    width = width,
-    height = height,
+    width = width.toInt(),
+    height = height.toInt(),
     density = Density(1f),
     coroutineContext = Dispatchers.Unconfined
   ) {
