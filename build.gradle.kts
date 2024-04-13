@@ -12,7 +12,6 @@ repositories {
   mavenCentral()
   google()
 }
-
 dependencies {
   // compose
   implementation(compose.desktop.currentOs)

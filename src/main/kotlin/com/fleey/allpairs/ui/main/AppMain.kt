@@ -32,8 +32,8 @@ fun AppMain(
   val onRemoveParam: (Int) -> Unit = { removedParamIndex ->
     paramList.removeAt(removedParamIndex)
     paramIndex--
-    for (index in removedParamIndex until paramList.size) {
-      paramList[index] = paramList[index].copy(id = index)
+    paramList.forEachIndexed { index, param ->
+      if (param.id != index) paramList[index] = param.copy(id = index)
     }
   }
   

@@ -12,8 +12,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,14 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fleey.allpairs.data.entity.AllPairsItem
 import com.fleey.allpairs.data.entity.Param
+import com.fleey.allpairs.extender.toParameters
+import com.fleey.allpairs.extender.validate
 import com.fleey.allpairs.handler.ExportResultHandler
 import com.fleey.allpairs.handler.ExportType
 import com.fleey.allpairs.ui.component.CustomBottomSheet
-import com.fleey.allpairs.ui.component.SaveFileDialog
 import com.fleey.allpairs.ui.component.Table
 import com.fleey.allpairs.util.IconUtil.fromResToIcon
-import com.fleey.allpairs.util.toParameters
-import com.fleey.allpairs.util.validate
 import com.fleey.swipebox.SwipeAction
 import com.fleey.swipebox.SwipeActionsBox
 import io.github.pavelicii.allpairs4j.AllPairs
@@ -136,7 +134,6 @@ fun ResultPage(
   val allPairs = AllPairs.AllPairsBuilder().withParameters(paramList.toParameters()).build()
   val bodyData = allPairs.toBodyData()
   
-  
   val sheetContent: @Composable ColumnScope.() -> Unit = {
     Column {
       ListItem(text = { Text("选择你要导出的方式~") })
@@ -191,25 +188,37 @@ private fun ExportTypeListItem(
   scope: CoroutineScope,
   bottomSheetState: ModalBottomSheetState,
 ) {
-  SaveFileDialog("File.xls", onFileSelected = {
-    println("$it")
-  }) {}
-  ExportType.entries.forEach {
-    val exportTypeName = it.name.lowercase()
-    val text = when (it) {
+  var chosenExportType by remember { mutableStateOf(ExportType.NULL) }
+  
+  ExportType.entries.forEach { exportType ->
+    if (exportType == ExportType.NULL) return@forEach
+    val exportTypeName = exportType.name.lowercase()
+    val text = when (exportType) {
       ExportType.TEXT -> "复制至剪贴板"
       else -> "导出为 $exportTypeName"
     }
     
-    Box {
-      ListItem(
-        icon = { "ic_export_$exportTypeName.svg".fromResToIcon() },
-        text = { Text(text) },
-        modifier = Modifier.clickable {
-          scope.launch { bottomSheetState.hide() }
-        }
-      )
-      ExportResultHandler.exportResultAsOrderType(it, headers, bodyData)
-    }
+    ListItem(
+      icon = { "ic_export_$exportTypeName.svg".fromResToIcon() },
+      text = { Text(text) },
+      modifier = Modifier.clickable {
+        chosenExportType = exportType
+      }
+    )
   }
+  
+  if (chosenExportType != ExportType.NULL) {
+    ExportResultHandler.exportResultAsOrderType(
+      chosenExportType,
+      headers,
+      bodyData,
+      onSuccess = {
+        scope.launch {
+          bottomSheetState.hide()
+        }
+      }
+    )
+    chosenExportType = ExportType.NULL
+  }
+  
 }

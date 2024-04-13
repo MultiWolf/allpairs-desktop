@@ -1,4 +1,4 @@
-package com.fleey.allpairs.util
+package com.fleey.allpairs.extender
 
 import com.fleey.allpairs.data.entity.Param
 import io.github.pavelicii.allpairs4j.Parameter
