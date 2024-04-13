@@ -24,4 +24,5 @@ val LightColorPalette = lightColors(
   onSurface = Color(0xFF4F5660),
   onPrimary = Color(0xFFFFFFFF),
   onSecondary = Color(0xFFE3E5E8),
+  secondaryVariant = Color(0xFF292A2F)
 )

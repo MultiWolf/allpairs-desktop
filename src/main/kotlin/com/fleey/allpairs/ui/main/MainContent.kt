@@ -37,13 +37,18 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun MainContent(
+  isDark: Boolean,
   paramList: List<Param>,
   pagerState: PagerState,
   onUpdateParam: (Param) -> Unit,
   onRemoveParam: (Int) -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  val resultBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+  val resultBottomSheetState = rememberModalBottomSheetState(
+    ModalBottomSheetValue.Hidden,
+    skipHalfExpanded = true,
+  )
+  
   val scope = rememberCoroutineScope()
   
   HorizontalPager(
@@ -61,7 +66,7 @@ fun MainContent(
         scope.launch { resultBottomSheetState.hide() }
       }
       
-      1 -> ResultPage(paramList, modifier.fillMaxSize(), scope, resultBottomSheetState)
+      1 -> ResultPage(isDark, paramList, modifier.fillMaxSize(), scope, resultBottomSheetState)
     }
   }
 }
@@ -110,6 +115,7 @@ fun EditPage(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ResultPage(
+  isDark: Boolean,
   paramList: List<Param>,
   modifier: Modifier = Modifier,
   scope: CoroutineScope,
@@ -138,7 +144,7 @@ fun ResultPage(
     Column {
       ListItem(text = { Text("选择你要导出的方式~") })
       
-      ExportTypeListItem(headers, bodyData, scope, bottomSheetState)
+      ExportTypeListItem(headers, bodyData, isDark, scope, bottomSheetState)
     }
   }
   
@@ -147,22 +153,10 @@ fun ResultPage(
       modifier = Modifier.fillMaxSize()
     ) {
       Surface(
-        modifier = modifier
-          .fillMaxHeight()
-          .weight(1f)
-          .background(MaterialTheme.colors.surface),
+        modifier = modifier.fillMaxHeight().weight(1f).background(MaterialTheme.colors.surface),
         elevation = 1.dp
       ) {
-        Table(
-          row = bodyData.size,
-          col = headers.size,
-          headerData = headers,
-        ) { row, col ->
-          when (col) {
-            0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
-            else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
-          }
-        }
+        ResultTable(headers, bodyData)
       }
       Button(
         onClick = { scope.launch { bottomSheetState.show() } },
@@ -170,6 +164,23 @@ fun ResultPage(
       ) {
         Text("导出")
       }
+    }
+  }
+}
+
+@Composable
+fun ResultTable(
+  headers: List<String>,
+  bodyData: List<AllPairsItem>
+) {
+  Table(
+    row = bodyData.size,
+    col = headers.size,
+    headerData = headers,
+  ) { row, col ->
+    when (col) {
+      0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
+      else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
     }
   }
 }
@@ -185,6 +196,7 @@ private fun AllPairs.toBodyData(): List<AllPairsItem> {
 private fun ExportTypeListItem(
   headers: List<String>,
   bodyData: List<AllPairsItem>,
+  isDark: Boolean,
   scope: CoroutineScope,
   bottomSheetState: ModalBottomSheetState,
 ) {
@@ -196,6 +208,7 @@ private fun ExportTypeListItem(
     
     val text = when (exportType) {
       ExportType.EXCEL -> "表格（.xlsx）"
+      ExportType.IMAGE -> "图片(.png)"
       ExportType.TEXT -> "纯文字"
       ExportType.MARKDOWN -> "Markdown"
       else -> ""
@@ -229,6 +242,7 @@ private fun ExportTypeListItem(
       chosenExportType,
       headers,
       bodyData,
+      isDark,
       onSuccess = {
         scope.launch {
           bottomSheetState.hide()

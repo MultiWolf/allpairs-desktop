@@ -41,6 +41,7 @@ fun AppMain(
   
   MainScaffold(isDark, toggleTheme, onFabClick, pagerState) {
     MainContent(
+      isDark,
       paramList = paramList,
       pagerState = pagerState,
       onUpdateParam = { paramList[it.id] = it },

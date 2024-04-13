@@ -6,6 +6,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
@@ -18,6 +19,7 @@ fun CustomBottomSheet(
   content: @Composable () -> Unit
 ) {
   ModalBottomSheetLayout(
+    modifier = Modifier,
     sheetShape = sheetShape,
     sheetState = state,
     sheetContent = sheetContent,

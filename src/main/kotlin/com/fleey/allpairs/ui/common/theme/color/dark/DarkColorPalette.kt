@@ -24,4 +24,5 @@ val DarkColorPalette = darkColors(
   onSurface = Color(0xFFABB1B8),
   onPrimary = Color(0xFFFFFFFF),
   onSecondary = Color(0xFF40444B),
+  secondaryVariant = Color(0xFFA9B7C5)
 )

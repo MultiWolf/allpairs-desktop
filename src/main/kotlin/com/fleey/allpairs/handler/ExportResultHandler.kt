@@ -1,9 +1,18 @@
 package com.fleey.allpairs.handler
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ImageComposeScene
+import androidx.compose.ui.unit.Density
 import com.fleey.allpairs.data.entity.AllPairsItem
+import com.fleey.allpairs.ui.common.theme.AppTheme
+import com.fleey.allpairs.ui.component.SaveFileDialog
+import com.fleey.allpairs.ui.main.ResultTable
 import com.fleey.allpairs.util.ClipboardUtil
 import com.fleey.allpairs.util.ExcelUtil
+import kotlinx.coroutines.Dispatchers
+import org.jetbrains.skia.EncodedImageFormat
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 
 object ExportResultHandler {
   @Composable
@@ -11,8 +20,9 @@ object ExportResultHandler {
     exportType: ExportType,
     headers: List<String>,
     bodyData: List<AllPairsItem>,
+    isDark: Boolean,
     onSuccess: () -> Unit = {},
-    onFailure: () -> Unit = {},
+    onFailure: (IOException) -> Unit = {},
   ) {
     when (exportType) {
       ExportType.EXCEL -> {
@@ -23,7 +33,17 @@ object ExportResultHandler {
         ExcelUtil.addData("Result Sheet", excelBody.toList()).saveAsExcel(
           "allpairs.xlsx",
           onSuccess = { onSuccess() },
-          onFailure = { onFailure() }
+          onFailure = { onFailure(it) }
+        )
+      }
+      
+      ExportType.IMAGE -> {
+        exportTableAsImage(
+          isDark,
+          headers,
+          bodyData,
+          onSuccess,
+          onFailure
         )
       }
       
@@ -68,8 +88,49 @@ object ExportResultHandler {
   }
 }
 
+@Composable
+fun exportTableAsImage(
+  isDark: Boolean,
+  headers: List<String>,
+  bodyData: List<AllPairsItem>,
+  onSuccess: () -> Unit = {},
+  onFailure: (IOException) -> Unit = {},
+) {
+  val width = headers.sumOf { it.length } * 38
+  val height = bodyData.size * 34
+  
+  val scene = ImageComposeScene(
+    width = width,
+    height = height,
+    density = Density(1f),
+    coroutineContext = Dispatchers.Unconfined
+  ) {
+    AppTheme(isDark) {
+      ResultTable(headers, bodyData)
+    }
+  }
+  
+  val image = scene.render()
+  image.use { img ->
+    img.encodeToData(EncodedImageFormat.PNG)?.let { data ->
+      val dataOutputStream = ByteArrayOutputStream().apply {
+        write(data.bytes)
+      }
+      
+      SaveFileDialog(
+        suggestFileName = "result.png",
+        dataOutputStream = dataOutputStream,
+        onSuccess = onSuccess,
+        onFailure = { onFailure(it) },
+      ) { }
+    }
+    
+  }
+}
+
 enum class ExportType {
   EXCEL,
+  IMAGE,
   TEXT,
   MARKDOWN,
   NULL

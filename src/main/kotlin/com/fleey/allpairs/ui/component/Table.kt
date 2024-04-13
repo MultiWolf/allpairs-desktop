@@ -64,7 +64,8 @@ fun Table(
           ) {
             headerRow?.invoke(colIndex) ?: Text(
               text = headerData.getOrNull(colIndex).orEmpty(),
-              style = MaterialTheme.typography.subtitle1
+              style = MaterialTheme.typography.subtitle1,
+              color = MaterialTheme.colors.secondaryVariant
             )
           }
         }
