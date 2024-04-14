@@ -57,7 +57,7 @@ fun main() = application {
           Icon(
             imageVector = if (isDark) Icons.Rounded.LightMode else Icons.Rounded.DarkMode,
             modifier = Modifier
-              .windowFrameItem("theme", HitSpots.CLOSE_BUTTON)
+              .windowFrameItem("theme", HitSpots.OTHER_HIT_SPOT)
               .clickable { isDark = !isDark }
               .padding(8.dp)
               .size(20.dp)
