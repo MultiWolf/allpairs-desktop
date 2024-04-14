@@ -16,23 +16,25 @@ fun SaveFileDialog(
   suggestFileName: String,
   suggestFileDir: String = "./",
   dataOutputStream: ByteArrayOutputStream,
-  onSuccess: () -> Unit = {},
+  onSuccess: (String) -> Unit = {},
   onFailure: (IOException) -> Unit = {},
   onDismiss: () -> Unit = {}
 ) {
-  val coroutineScope = rememberCoroutineScope()
+  val scope = rememberCoroutineScope()
   LaunchedEffect(suggestFileName, suggestFileDir) {
     val fileDialog = FileDialog(Frame(), "保存文件至", FileDialog.SAVE).apply {
       directory = suggestFileDir
       file = suggestFileName
     }
+    
     fileDialog.isVisible = true
+    
     if (fileDialog.file != null) {
-      coroutineScope.launch {
+      scope.launch {
         try {
           val filePath = fileDialog.directory + fileDialog.file
           FileUtil.writeFile(filePath, dataOutputStream.toByteArray(),
-            onSuccess = onSuccess,
+            onSuccess = { onSuccess(filePath) },
             onFailure = { onFailure(it) })
         } catch (e: IOException) {
           onFailure(e)

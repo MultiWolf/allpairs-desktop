@@ -22,11 +22,14 @@ import androidx.compose.ui.unit.sp
 import com.fleey.allpairs.data.entity.AllPairsItem
 import com.fleey.allpairs.data.entity.Param
 import com.fleey.allpairs.extender.fromResToIcon
+import com.fleey.allpairs.extender.openFileInEnv
 import com.fleey.allpairs.extender.toParameters
 import com.fleey.allpairs.extender.validate
 import com.fleey.allpairs.handler.ExportResultHandler
 import com.fleey.allpairs.handler.ExportType
 import com.fleey.allpairs.ui.component.CustomBottomSheet
+import com.fleey.allpairs.ui.component.DialogType
+import com.fleey.allpairs.ui.component.NotificationDialog
 import com.fleey.allpairs.ui.component.Table
 import com.fleey.swipebox.SwipeAction
 import com.fleey.swipebox.SwipeActionsBox
@@ -201,6 +204,25 @@ private fun ExportTypeListItem(
   bottomSheetState: ModalBottomSheetState,
 ) {
   var chosenExportType by remember { mutableStateOf(ExportType.NULL) }
+  var filePath by remember { mutableStateOf("") }
+  var exceptionMsg by remember { mutableStateOf("") }
+  
+  val successDialog = NotificationDialog(
+    DialogType.SUCCESS,
+    title = "是否打开文件",
+    positiveText = "打开",
+    subTitle = "文件已保存至\n$filePath"
+  ) {
+    filePath.openFileInEnv()
+    it.hide()
+  }
+  
+  val errorDialog = NotificationDialog(
+    DialogType.ERROR,
+    title = "保存失败",
+    subTitle = exceptionMsg,
+  )
+  
   
   ExportType.entries.forEach { exportType ->
     if (exportType == ExportType.NULL) return@forEach
@@ -249,7 +271,15 @@ private fun ExportTypeListItem(
       onSuccess = {
         scope.launch {
           bottomSheetState.hide()
+          it?.let {
+            filePath = it
+            successDialog.show()
+          }
         }
+      },
+      onFailure = {
+        exceptionMsg = it.message.toString()
+        errorDialog.show()
       }
     )
     chosenExportType = ExportType.NULL

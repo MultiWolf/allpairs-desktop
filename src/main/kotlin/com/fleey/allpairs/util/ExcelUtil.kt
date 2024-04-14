@@ -29,7 +29,7 @@ object ExcelUtil {
   @Composable
   fun saveAsExcel(
     suggestFIleName: String,
-    onSuccess: () -> Unit = {},
+    onSuccess: (String) -> Unit = {},
     onFailure: (IOException) -> Unit = {}
   ) {
     val dataOutputStream = ByteArrayOutputStream().apply {

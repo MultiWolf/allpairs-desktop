@@ -21,7 +21,7 @@ object ExportResultHandler {
     headers: List<String>,
     bodyData: List<AllPairsItem>,
     isDark: Boolean,
-    onSuccess: () -> Unit = {},
+    onSuccess: (String?) -> Unit = {},
     onFailure: (IOException) -> Unit = {},
   ) {
     when (exportType) {
@@ -32,7 +32,7 @@ object ExportResultHandler {
         
         ExcelUtil.addData("Result Sheet", excelBody.toList()).saveAsExcel(
           "allpairs.xlsx",
-          onSuccess = { onSuccess() },
+          onSuccess = { onSuccess(it) },
           onFailure = { onFailure(it) }
         )
       }
@@ -58,7 +58,7 @@ object ExportResultHandler {
           }
         }
         ClipboardUtil.CopyTextToClipboard(bodyContent)
-        onSuccess()
+        onSuccess(null)
       }
       
       ExportType.MARKDOWN -> {
@@ -80,7 +80,7 @@ object ExportResultHandler {
           }
         }
         ClipboardUtil.CopyTextToClipboard(markdownContent)
-        onSuccess()
+        onSuccess(null)
       }
       
       ExportType.NULL -> {}
@@ -93,7 +93,7 @@ fun exportTableAsImage(
   isDark: Boolean,
   headers: List<String>,
   bodyData: List<AllPairsItem>,
-  onSuccess: () -> Unit = {},
+  onSuccess: (String) -> Unit = {},
   onFailure: (IOException) -> Unit = {},
 ) {
   val width = headers.sumOf { it.length } * 8.5 + headers.size * 89.7

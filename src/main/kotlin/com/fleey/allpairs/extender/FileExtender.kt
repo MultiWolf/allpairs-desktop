@@ -1,5 +1,7 @@
 package com.fleey.allpairs.extender
 
+import com.fleey.allpairs.util.EnvType
+import com.fleey.allpairs.util.EnvUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -35,5 +37,45 @@ fun File.toText(): String? {
   } catch (e: IOException) {
     println("Error reading file to text: ${e.message}")
     null
+  }
+}
+
+fun String.openFileInEnv() {
+  val envType = EnvUtil.getEnvType()
+  when (envType) {
+    EnvType.MAC -> openFileInFinder()
+    EnvType.WINDOWS -> openFileInExplorer()
+    EnvType.LINUX -> openFileInFileManager()
+    EnvType.UNKNOWN -> throw IllegalStateException(
+      "Unsupported or unknown operating system: ${
+        System.getProperty(
+          "os.name"
+        )
+      }"
+    )
+  }
+}
+
+private fun String.openFileInExplorer() {
+  try {
+    Runtime.getRuntime().exec("explorer.exe /select,${this.replace('/', '\\')}")
+  } catch (e: IOException) {
+    throw IllegalStateException("Failed to open file in Windows Explorer: $this", e)
+  }
+}
+
+private fun String.openFileInFinder() {
+  try {
+    Runtime.getRuntime().exec(arrayOf("open", "-R", this))
+  } catch (e: IOException) {
+    throw IllegalStateException("Failed to open file in macOS Finder: $this", e)
+  }
+}
+
+private fun String.openFileInFileManager() {
+  try {
+    Runtime.getRuntime().exec(arrayOf("xdg-open", this))
+  } catch (e: IOException) {
+    throw IllegalStateException("Failed to open file in Linux file manager: $this", e)
   }
 }
