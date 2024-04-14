@@ -12,6 +12,7 @@ repositories {
 dependencies {
   // compose
   implementation(compose.desktop.common)
+  implementation(compose.material3)
   // protobuf
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf-jvm:1.6.3")
   // coroutines
