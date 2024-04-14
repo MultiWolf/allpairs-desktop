@@ -51,7 +51,7 @@
 >
 > 1. 配置 `JBR` 是由于本项目进行了自定义窗口；
 > 2. 若运行失败多半是 Gradle 配置存在问题，可以尝试修改 Gradle 为非 JBR；
-> 3. 打包命令默认打包当前系统可执行文件，默认可打包 `.dmg`（macOS）、`.exe`（windows）、`.deb`（Linux）；
+> 3. 打包命令默认打包当前系统可执行文件，默认可打包 `.dmg`（macOS）、`.exe`（Windows）、`.deb`（Linux）；
 > 4. 如需修改支持打包类型，修改 [build.gradle.kts](build.gradle.kts)（root
      project）中的 `targetFormats`；
 > 5. 如需打包不同系统环境下的可执行文件，请在 Gradle 命令中查看诸如 `packagXXX(你期望的类型)` 的命令；
