@@ -40,6 +40,25 @@
 - [ ] 侧滑 - 添加项
 - [ ] 呈现更详细、美观的错误提示
 
+# 起步
+
+1. 配置项目的 SDK 和 Gradle 为 [JBR](https://github.com/JetBrains/JetBrainsRuntime)（JetBrains
+   Runtime）,
+2. 在你的当前环境调试，借助 `gradle run` 编译并运行 compose desktop,
+3. 若满意效果并想要打包，借助 `gradle package` 编译构建.
+
+> 注意：
+>
+> 1. 配置 `JBR` 是由于本项目进行了自定义窗口；
+> 2. 若运行失败多半是 Gradle 配置存在问题，可以尝试修改 Gradle 为非 JBR；
+> 3. 打包命令默认打包当前系统可执行文件，默认可打包 `.dmg`（macOS）、`.exe`（windows）、`.deb`（Linux）；
+> 4. 如需修改支持打包类型，修改 [build.gradle.kts](build.gradle.kts)（root
+     project）中的 `targetFormats`；
+> 5. 如需打包不同系统环境下的可执行文件，请在 Gradle 命令中查看诸如 `packagXXX(你期望的类型)` 的命令；
+> 6.
+你的系统环境下可能无法打包某些目标格式，请参阅[这里](https://github.com/JetBrains/compose-multiplatform/blob/master/tutorials/Native_distributions_and_local_execution/README.md#basic-usage)；
+> 7. 若遇到问题排查无解，欢迎提交 Issue 喵～。
+
 # 一些话
 
 这是我第三次和 Compose 正式打交道了（all platform），感觉自己水平还是太差了。
@@ -86,8 +105,6 @@ demo。
 
 我的学生 @WindC
 
-微软 Fluent icons
-
 第三方库：
 
 - [allpairs4j](https://github.com/pavelicii/allpairs4j)
@@ -95,6 +112,8 @@ demo。
 网站：
 
 - [Jetpack Composes 博物馆](https://jetpackcompose.cn/docs/)
+- [Google Fonts](https://fonts.google.com/icons)
+- [Fluent Icons](https://fluenticons.co/)
 
 License
 -------
