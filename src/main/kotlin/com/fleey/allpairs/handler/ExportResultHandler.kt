@@ -6,8 +6,8 @@ import androidx.compose.ui.unit.Density
 import com.fleey.allpairs.data.entity.AllPairsItem
 import com.fleey.allpairs.extender.ResExtender.fromResToText
 import com.fleey.allpairs.ui.common.theme.AppTheme
+import com.fleey.allpairs.ui.component.ResultTable
 import com.fleey.allpairs.ui.component.SaveFileDialog
-import com.fleey.allpairs.ui.main.ResultTable
 import com.fleey.allpairs.util.ClipboardUtil
 import com.fleey.allpairs.util.ExcelUtil
 import kotlinx.coroutines.Dispatchers

@@ -19,6 +19,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.fleey.allpairs.data.entity.AllPairsItem
+
+@Composable
+fun ResultTable(
+  headers: List<String>,
+  bodyData: List<AllPairsItem>
+) {
+  Table(
+    row = bodyData.size,
+    col = headers.size,
+    headerData = headers,
+  ) { row, col ->
+    when (col) {
+      0 -> Text("${row + 1}", color = MaterialTheme.colors.primary)
+      else -> Text(bodyData[row].values[col - 1], color = Color.Gray)
+    }
+  }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
