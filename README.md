@@ -32,6 +32,7 @@
     - [x] 图片
     - [x] 纯文字
     - [x] Markdown
+    - [x] 网页
 - [x] 自定义窗口
 - [x] 导出成功询问打开
 - [x] 导出失败提示
@@ -48,16 +49,15 @@
 3. 若满意效果并想要打包，借助 `gradle package` 编译构建.
 
 > 注意：
->
-> 1. 配置 `JBR` 是由于本项目进行了自定义窗口；
-> 2. 若运行失败多半是 Gradle 配置存在问题，可以尝试修改 Gradle 为非 JBR；
-> 3. 打包命令默认打包当前系统可执行文件，默认可打包 `.dmg`（macOS）、`.exe`（Windows）、`.deb`（Linux）；
-> 4. 如需修改支持打包类型，修改 [build.gradle.kts](build.gradle.kts)（root
-     project）中的 `targetFormats`；
-> 5. 如需打包不同系统环境下的可执行文件，请在 Gradle 命令中查看诸如 `packagXXX(你期望的类型)` 的命令；
-> 6.
-你的系统环境下可能无法打包某些目标格式，请参阅[这里](https://github.com/JetBrains/compose-multiplatform/blob/master/tutorials/Native_distributions_and_local_execution/README.md#basic-usage);
-> 7. 若遇到问题排查无解，欢迎提交 Issue 喵～。
+> 
+> 1. 克隆本项目：`git clone https://github.com/MultiWolf/allpairs-desktop.git`
+> 2. 配置 `JBR` 是由于本项目进行了自定义窗口，若运行发现窗口与截图有出入，请检查是否配置 JBR；
+> 3. 若运行失败多半是 Gradle 配置存在问题，可以尝试修改 Gradle 为非 JBR；
+> 4. 打包命令默认打包当前系统可执行文件，默认可打包 `.dmg`（macOS）、`.exe`（Windows）、`.deb`（Linux）；
+> 5. 如需修改支持打包类型，修改 [build.gradle.kts](https://github.com/MultiWolf/allpairs-desktop/blob/main/build.gradle.kts)（root project）中的 `targetFormats`；
+> 6. 如需打包不同系统环境下的可执行文件，请在 Gradle 命令中查看诸如 `packagXXX(你期望的类型)` 的命令；
+> 7. 你的系统环境下可能无法打包某些目标格式，请参阅[这里](https://github.com/JetBrains/compose-multiplatform/blob/master/tutorials/Native_distributions_and_local_execution/README.md#basic-usage) ;
+> 8. 若遇到问题排查无解，欢迎提交 Issue 喵～。
 
 # 一些话
 
