@@ -55,8 +55,7 @@
 > 4. 如需修改支持打包类型，修改 [build.gradle.kts](build.gradle.kts)（root
      project）中的 `targetFormats`；
 > 5. 如需打包不同系统环境下的可执行文件，请在 Gradle 命令中查看诸如 `packagXXX(你期望的类型)` 的命令；
-> 6.
-你的系统环境下可能无法打包某些目标格式，请参阅[这里](https://github.com/JetBrains/compose-multiplatform/blob/master/tutorials/Native_distributions_and_local_execution/README.md#basic-usage)；
+> 6. 你的系统环境下可能无法打包某些目标格式，请参阅[这里](https://github.com/JetBrains/compose-multiplatform/blob/master/tutorials/Native_distributions_and_local_execution/README.md#basic-usage);
 > 7. 若遇到问题排查无解，欢迎提交 Issue 喵～。
 
 # 一些话
