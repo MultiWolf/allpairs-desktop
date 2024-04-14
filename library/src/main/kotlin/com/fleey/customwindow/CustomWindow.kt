@@ -2,11 +2,9 @@ package com.fleey.customwindow
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.window.WindowDraggableArea
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -185,9 +183,7 @@ fun CustomWindow(
   content: @Composable FrameWindowScope.() -> Unit,
 ) {
   //two-way binding
-  val windowController = remember {
-    WindowController()
-  }
+  val windowController = remember { WindowController() }
   val center = windowController.center ?: {}
   
   
@@ -200,7 +196,7 @@ fun CustomWindow(
     undecorated = false
   } else {
     //we decorate window and add our custom layout
-    transparent = false
+    transparent = true
     undecorated = true
   }
   Window(
@@ -212,27 +208,28 @@ fun CustomWindow(
   ) {
     window.minimumSize = Dimension(minWidth, minHeight)
     val title = windowController.title ?: defaultTitle
-    LaunchedEffect(title) {
-      window.title = title
-    }
-    CompositionLocalProvider(
-      LocalWindowController provides windowController,
-      LocalWindowState provides state,
-    ) {
-      val icon by rememberUpdatedState(windowController.icon)
-      val onIconClick by rememberUpdatedState(windowController.onIconClick)
-      // a window frame which totally rendered with compose
-      CustomWindowFrame(
-        onRequestMinimize = onRequestMinimize,
-        onRequestClose = onCloseRequest,
-        onRequestToggleMaximize = onRequestToggleMaximize,
-        title = title,
-        windowIcon = icon,
-        showWindowsActionButtons = showWindowsActionButtons,
-        titleStartPadding = titleStartPadding,
-        center = { center() },
+    LaunchedEffect(title) { window.title = title }
+    
+    Surface(shape = RoundedCornerShape(12.dp)) {
+      CompositionLocalProvider(
+        LocalWindowController provides windowController,
+        LocalWindowState provides state,
       ) {
-        content()
+        val icon by rememberUpdatedState(windowController.icon)
+        val onIconClick by rememberUpdatedState(windowController.onIconClick)
+        // a window frame which totally rendered with compose
+        CustomWindowFrame(
+          onRequestMinimize = onRequestMinimize,
+          onRequestClose = onCloseRequest,
+          onRequestToggleMaximize = onRequestToggleMaximize,
+          title = title,
+          windowIcon = icon,
+          showWindowsActionButtons = showWindowsActionButtons,
+          titleStartPadding = titleStartPadding,
+          center = { center() },
+        ) {
+          content()
+        }
       }
     }
   }

@@ -1,6 +1,9 @@
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -40,27 +43,24 @@ fun main() = application {
   var isDark by remember { mutableStateOf(isDarkMode) }
   val isMacEnv = EnvUtil.isOrderEnvType(EnvType.MAC)
   
-  val windowTitleStartPadding = if (isMacEnv) 64 else 0
-  
   MaterialTheme(themes[isDark]!!) {
     CustomWindow(
       state,
       windowMinWidth,
       windowMinHeight,
-      !isMacEnv,
-      windowTitleStartPadding,
+      true,
+      0,
       { exitApplication() }) {
       WindowCenter {
         WindowTitle("")
         Row(Modifier.fillMaxWidth()) {
-          if (isMacEnv) Spacer((Modifier.weight(1f)))
           Icon(
             imageVector = if (isDark) Icons.Rounded.LightMode else Icons.Rounded.DarkMode,
             modifier = Modifier
               .windowFrameItem("theme", HitSpots.OTHER_HIT_SPOT)
               .clickable { isDark = !isDark }
               .padding(5.dp)
-              .size(20.dp)
+              .size(18.dp)
               .clip(CircleShape),
             contentDescription = "toggle light/dark theme",
           )

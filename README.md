@@ -18,6 +18,7 @@
     - library
         - dataroom
         - viewmodel
+        - customwindow
         - swipbox
         - swiptodelete
 
