@@ -32,7 +32,7 @@ fun SwipeAction(
       Image(
         modifier = Modifier.size(iconSize),
         painter = icon,
-        contentDescription = null
+        contentDescription = null,
       )
     },
     iconSize = iconSize,

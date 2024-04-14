@@ -31,6 +31,8 @@ private fun FrameWindowScope.CustomWindowFrame(
   onRequestToggleMaximize: (() -> Unit)?,
   title: String,
   windowIcon: ImageVector? = null,
+  showWindowsActionButtons: Boolean,
+  titleStartPadding: Int,
   center: @Composable () -> Unit,
   content: @Composable () -> Unit,
 ) {
@@ -49,7 +51,9 @@ private fun FrameWindowScope.CustomWindowFrame(
         onRequestMinimize = onRequestMinimize,
         onRequestClose = onRequestClose,
         onRequestToggleMaximize = onRequestToggleMaximize,
-        windowState = LocalWindowState.current
+        windowState = LocalWindowState.current,
+        showWindowsActionButtons = showWindowsActionButtons,
+        titleStartPadding = titleStartPadding
       )
       content()
     }
@@ -76,6 +80,8 @@ fun FrameWindowScope.SnapDraggableToolbar(
   title: String,
   windowIcon: ImageVector? = null,
   center: @Composable () -> Unit,
+  showWindowsActionButtons: Boolean,
+  titleStartPadding: Int,
   onRequestMinimize: (() -> Unit)?,
   onRequestToggleMaximize: (() -> Unit)?,
   onRequestClose: () -> Unit,
@@ -89,6 +95,8 @@ fun FrameWindowScope.SnapDraggableToolbar(
         title,
         windowIcon,
         center,
+        showWindowsActionButtons,
+        titleStartPadding,
         onRequestMinimize,
         onRequestToggleMaximize,
         onRequestClose
@@ -99,6 +107,8 @@ fun FrameWindowScope.SnapDraggableToolbar(
           title,
           windowIcon,
           center,
+          showWindowsActionButtons,
+          titleStartPadding,
           onRequestMinimize,
           onRequestToggleMaximize,
           onRequestClose
@@ -113,6 +123,8 @@ private fun FrameWindowScope.FrameContent(
   title: String,
   windowIcon: ImageVector? = null,
   center: @Composable () -> Unit,
+  showWindowsActionButtons: Boolean,
+  titleStartPadding: Int,
   onRequestMinimize: (() -> Unit)?,
   onRequestToggleMaximize: (() -> Unit)?,
   onRequestClose: () -> Unit,
@@ -121,7 +133,6 @@ private fun FrameWindowScope.FrameContent(
     Modifier.fillMaxWidth(),
     verticalAlignment = Alignment.CenterVertically,
   ) {
-    Spacer(Modifier.width(64.dp))
     windowIcon?.let {
       Icon(it, null)
       Spacer(Modifier.width(8.dp))
@@ -129,21 +140,25 @@ private fun FrameWindowScope.FrameContent(
     CompositionLocalProvider(
       LocalContentColor provides MaterialTheme.colors.onBackground.copy(0.75f)
     ) {
+      Spacer(modifier = Modifier.padding(start = titleStartPadding.dp))
       Text(
-        title, maxLines = 1,
+        text = title,
+        maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        fontSize = 16.sp,
+        fontSize = 14.sp,
         modifier = Modifier.windowFrameItem("title", HitSpots.DRAGGABLE_AREA)
       )
     }
     Box(Modifier.weight(1f)) {
       center()
     }
-    WindowsActionButtons(
-      onRequestClose,
-      onRequestMinimize,
-      onRequestToggleMaximize,
-    )
+    if (showWindowsActionButtons) {
+      WindowsActionButtons(
+        onRequestClose,
+        onRequestMinimize,
+        onRequestToggleMaximize,
+      )
+    }
   }
 }
 
@@ -152,6 +167,8 @@ fun CustomWindow(
   state: WindowState,
   minWidth: Int,
   minHeight: Int,
+  showWindowsActionButtons: Boolean,
+  titleStartPadding: Int,
   onCloseRequest: () -> Unit,
   onRequestMinimize: (() -> Unit)? = {
     state.isMinimized = true
@@ -211,7 +228,9 @@ fun CustomWindow(
         onRequestToggleMaximize = onRequestToggleMaximize,
         title = title,
         windowIcon = icon,
-        center = { center() }
+        showWindowsActionButtons = showWindowsActionButtons,
+        titleStartPadding = titleStartPadding,
+        center = { center() },
       ) {
         content()
       }

@@ -1,9 +1,6 @@
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -24,6 +21,8 @@ import com.fleey.allpairs.data.config.windowMinHeight
 import com.fleey.allpairs.data.config.windowMinWidth
 import com.fleey.allpairs.ui.common.theme.themes
 import com.fleey.allpairs.ui.main.AppMain
+import com.fleey.allpairs.util.EnvType
+import com.fleey.allpairs.util.EnvUtil
 import com.fleey.customwindow.*
 
 /**
@@ -37,30 +36,33 @@ fun main() = application {
       windowMinHeight.dp
     )
   )
-  val _isDark = isSystemInDarkTheme()
-  var isDark by remember { mutableStateOf(_isDark) }
+  val isDarkMode = isSystemInDarkTheme()
+  var isDark by remember { mutableStateOf(isDarkMode) }
+  val isMacEnv = EnvUtil.isOrderEnvType(EnvType.MAC)
+  
+  val windowTitleStartPadding = if (isMacEnv) 64 else 0
   
   MaterialTheme(themes[isDark]!!) {
-    CustomWindow(state,
+    CustomWindow(
+      state,
       windowMinWidth,
       windowMinHeight,
+      !isMacEnv,
+      windowTitleStartPadding,
       { exitApplication() }) {
-      WindowTitle("")
       WindowCenter {
-        Row(
-          Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp),
-        ) {
+        WindowTitle("")
+        Row(Modifier.fillMaxWidth()) {
+          if (isMacEnv) Spacer((Modifier.weight(1f)))
           Icon(
-            if (isDark) Icons.Rounded.LightMode else Icons.Rounded.DarkMode,
-            null,
-            Modifier
-              .windowFrameItem("theme", HitSpots.OTHER_HIT_SPOT)
+            imageVector = if (isDark) Icons.Rounded.LightMode else Icons.Rounded.DarkMode,
+            modifier = Modifier
+              .windowFrameItem("theme", HitSpots.CLOSE_BUTTON)
               .clickable { isDark = !isDark }
-              .padding(4.dp)
-              .size(18.dp)
-              .clip(CircleShape)
+              .padding(8.dp)
+              .size(20.dp)
+              .clip(CircleShape),
+            contentDescription = "toggle light/dark theme",
           )
         }
       }
