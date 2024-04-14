@@ -200,7 +200,7 @@ fun CustomWindow(
     undecorated = false
   } else {
     //we decorate window and add our custom layout
-    transparent = true
+    transparent = false
     undecorated = true
   }
   Window(

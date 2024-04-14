@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.unit.Density
 import com.fleey.allpairs.data.entity.AllPairsItem
+import com.fleey.allpairs.extender.ResExtender.fromResToText
 import com.fleey.allpairs.ui.common.theme.AppTheme
 import com.fleey.allpairs.ui.component.SaveFileDialog
 import com.fleey.allpairs.ui.main.ResultTable
@@ -32,6 +33,18 @@ object ExportResultHandler {
         
         ExcelUtil.addData("Result Sheet", excelBody.toList()).saveAsExcel(
           "allpairs.xlsx",
+          onSuccess = { onSuccess(it) },
+          onFailure = { onFailure(it) }
+        )
+      }
+      
+      ExportType.HTML -> {
+        val htmlDataOutputSteam =
+          exportToHTMLDataOutputSteam(headers, bodyData, "style.css")
+        
+        SaveFileDialog(
+          "allpairs.html",
+          dataOutputStream = htmlDataOutputSteam,
           onSuccess = { onSuccess(it) },
           onFailure = { onFailure(it) }
         )
@@ -89,7 +102,70 @@ object ExportResultHandler {
 }
 
 @Composable
-fun exportTableAsImage(
+private fun exportToHTMLDataOutputSteam(
+  headers: List<String>,
+  bodyData: List<AllPairsItem>,
+  cssFilename: String
+): ByteArrayOutputStream {
+  val htmlStr = generateFullHTML(headers, bodyData, cssFilename)
+  val dataOutputStream = ByteArrayOutputStream().apply {
+    write(htmlStr.toByteArray())
+  }
+  
+  return dataOutputStream
+}
+
+private fun generateHTMLHead(cssFilename: String): String = buildString {
+  val cssStr = cssFilename.fromResToText()
+  append(
+    """
+
+    <head>
+      <meta charset='UTF-8'>
+      <meta name='viewport' content='width=device-width initial-scale=1'>
+      <title>allpairs-result</title>
+      <style>
+    $cssStr
+      </style>
+    </head>
+        """.trimIndent()
+  )
+}
+
+private fun generateTableHeader(headers: List<String>): String = buildString {
+  append("<thead><tr>")
+  headers.forEach { append("<th>$it</th>") }
+  append("</tr></thead>")
+}
+
+private fun generateTableBody(bodyData: List<AllPairsItem>): String = buildString {
+  append("<tbody>")
+  bodyData.forEach { row ->
+    append("<tr><td>${row.index}</td>")
+    row.values.forEach { value ->
+      append("<td>$value</td>")
+    }
+    append("</tr>")
+  }
+  append("</tbody>")
+}
+
+private fun generateFullHTML(
+  headers: List<String>,
+  bodyData: List<AllPairsItem>,
+  cssFilename: String
+): String = buildString {
+  append("<html>")
+  append(generateHTMLHead(cssFilename))
+  append("<body><div><figure><table>")
+  append(generateTableHeader(headers))
+  append(generateTableBody(bodyData))
+  append("</table></figure></div></body>")
+  append("</html>")
+}
+
+@Composable
+private fun exportTableAsImage(
   isDark: Boolean,
   headers: List<String>,
   bodyData: List<AllPairsItem>,
@@ -118,7 +194,7 @@ fun exportTableAsImage(
       }
       
       SaveFileDialog(
-        suggestFileName = "result.png",
+        suggestFileName = "allpairs.png",
         dataOutputStream = dataOutputStream,
         onSuccess = onSuccess,
         onFailure = { onFailure(it) },
@@ -130,8 +206,9 @@ fun exportTableAsImage(
 
 enum class ExportType {
   EXCEL,
+  HTML,
   IMAGE,
-  TEXT,
   MARKDOWN,
+  TEXT,
   NULL
 }
