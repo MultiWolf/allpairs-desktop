@@ -1,5 +1,7 @@
 package com.fleey.allpairs.ui.main
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
@@ -11,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.fleey.allpairs.data.entity.Param
+import com.fleey.allpairs.extender.scrollToPageWithAnimTo
 import com.fleey.allpairs.ui.main.page.EditPage
 import com.fleey.allpairs.ui.main.page.ResultPage
 import kotlinx.coroutines.launch
@@ -36,7 +39,7 @@ fun MainContent(
   HorizontalPager(
     state = pagerState,
     modifier = Modifier.fillMaxSize(),
-    userScrollEnabled = false
+    userScrollEnabled = false,
   ) { page ->
     when (page) {
       0 -> {
@@ -45,7 +48,7 @@ fun MainContent(
           onUpdateParam,
           onRemoveParam,
           onAddParamAfter,
-          { scope.launch { pagerState.animateScrollToPage(1) } },
+          { scope.launch { pagerState.scrollToPageWithAnimTo(1) } },
           modifier
         )
         scope.launch { resultBottomSheetState.hide() }
@@ -63,3 +66,27 @@ fun MainContent(
     }
   }
 }
+
+
+@OptIn(ExperimentalFoundationApi::class)
+fun pageOffsetFraction(pagerState: PagerState): (AnimatedContentTransitionScope<String>) -> () -> ContentTransform =
+  {
+    val pageOffset = pagerState.currentPageOffsetFraction
+    val isMovingForward = pagerState.currentPage > pagerState.targetPage
+    
+    val (inInitialOffsetX, outTargetOffsetX) = if (isMovingForward) {
+      Pair({ fullWidth: Int -> fullWidth }, { fullWidth: Int -> -fullWidth })
+    } else {
+      Pair({ fullWidth: Int -> -fullWidth }, { fullWidth: Int -> fullWidth })
+    }
+    
+    {
+      slideInHorizontally(
+        initialOffsetX = inInitialOffsetX,
+        animationSpec = TweenSpec(durationMillis = 300)
+      ) + fadeIn() togetherWith slideOutHorizontally(
+        targetOffsetX = outTargetOffsetX,
+        animationSpec = TweenSpec(durationMillis = 300)
+      ) + fadeOut()
+    }
+  }
