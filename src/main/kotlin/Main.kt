@@ -59,7 +59,7 @@ fun main() = application {
             modifier = Modifier
               .windowFrameItem("theme", HitSpots.OTHER_HIT_SPOT)
               .clickable { isDark = !isDark }
-              .padding(8.dp)
+              .padding(5.dp)
               .size(20.dp)
               .clip(CircleShape),
             contentDescription = "toggle light/dark theme",
