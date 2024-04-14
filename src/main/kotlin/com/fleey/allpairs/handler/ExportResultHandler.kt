@@ -31,7 +31,7 @@ object ExportResultHandler {
           listOf<Any>(item.index) + item.values
         }
         
-        ExcelUtil.addData("Result Sheet", excelBody.toList()).saveAsExcel(
+        ExcelUtil().addData("Result Sheet", excelBody.toList()).saveAsExcel(
           "allpairs.xlsx",
           onSuccess = { onSuccess(it) },
           onFailure = { onFailure(it) }

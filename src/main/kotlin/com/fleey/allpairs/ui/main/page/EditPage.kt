@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AddLocation
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ fun EditPage(
   paramList: List<Param>,
   onUpdateParam: (Param) -> Unit,
   onRemoveParam: (Int) -> Unit,
+  onAddParamAfter: (Int) -> Unit,
   onGenerateClick: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
@@ -37,12 +39,19 @@ fun EditPage(
       state = rememberLazyListState()
     ) {
       items(paramList, key = { item -> item.random }) { item ->
+        val addItemAction = SwipeAction(
+          icon = rememberVectorPainter(Icons.Rounded.AddLocation),
+          background = Color.Green,
+          onClick = { onAddParamAfter(item.id) }
+        )
         val deleteItemAction = SwipeAction(
           icon = rememberVectorPainter(Icons.Rounded.Delete),
           background = Color.Red,
           onClick = { onRemoveParam(item.id) }
         )
-        SwipeActionsBox(rightActions = listOf(deleteItemAction)) {
+        SwipeActionsBox(
+          rightActions = listOf(addItemAction, deleteItemAction)
+        ) {
           ParamItem(
             param = item,
             onUpdate = { onUpdateParam(it) },

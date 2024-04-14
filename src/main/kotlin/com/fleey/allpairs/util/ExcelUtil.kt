@@ -7,7 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
-object ExcelUtil {
+class ExcelUtil {
   private val workbook = XSSFWorkbook()
   
   fun addData(

@@ -3,6 +3,7 @@ package com.fleey.allpairs.ui.component
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -15,7 +16,7 @@ import androidx.compose.ui.unit.dp
 fun CustomBottomSheet(
   state: ModalBottomSheetState,
   sheetContent: @Composable ColumnScope.() -> Unit,
-  sheetShape: Shape = RoundedCornerShape(16.dp),
+  sheetShape: Shape = RoundedCornerShape(12.dp),
   content: @Composable () -> Unit
 ) {
   ModalBottomSheetLayout(
@@ -23,6 +24,8 @@ fun CustomBottomSheet(
     sheetShape = sheetShape,
     sheetState = state,
     sheetContent = sheetContent,
+    sheetElevation = 0.dp,
+    sheetBackgroundColor = MaterialTheme.colors.surface
   ) {
     content()
   }

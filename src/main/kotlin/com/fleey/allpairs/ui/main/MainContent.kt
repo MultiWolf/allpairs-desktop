@@ -23,6 +23,7 @@ fun MainContent(
   pagerState: PagerState,
   onUpdateParam: (Param) -> Unit,
   onRemoveParam: (Int) -> Unit,
+  onAddParamAfter: (Int) -> Unit,
   modifier: Modifier = Modifier,
 ) {
   val resultBottomSheetState = rememberModalBottomSheetState(
@@ -43,6 +44,7 @@ fun MainContent(
           paramList,
           onUpdateParam,
           onRemoveParam,
+          onAddParamAfter,
           { scope.launch { pagerState.animateScrollToPage(1) } },
           modifier
         )
