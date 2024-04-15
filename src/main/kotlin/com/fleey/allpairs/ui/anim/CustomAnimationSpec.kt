@@ -4,8 +4,8 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 
 const val durationMillis = 360
-const val smallScale = 0.9f
-const val bigScale = 1.1f
+const val smallScale = 0.95f
+const val bigScale = 1.05f
 
 val fromLeftToRightAnim: AnimatedContentTransitionScope<String>.() -> ContentTransform = {
   slideInHorizontally(
