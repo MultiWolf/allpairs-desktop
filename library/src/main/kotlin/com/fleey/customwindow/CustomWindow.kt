@@ -8,6 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalWindowInfo
@@ -19,6 +20,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import com.fleey.customwindow.util.CustomWindowDecorationAccessing
+import com.fleey.toggle.ToggleEffectBox
 import java.awt.Dimension
 
 // a window frame which totally rendered with compose
@@ -166,7 +168,10 @@ fun CustomWindow(
   minWidth: Int,
   minHeight: Int,
   showWindowsActionButtons: Boolean,
-  titleStartPadding: Int,
+  roundCorner: Int = 12,
+  titleStartPadding: Int = 0,
+  isDark: Boolean = false,
+  triggerPosition: Offset = Offset.Zero,
   onCloseRequest: () -> Unit,
   onRequestMinimize: (() -> Unit)? = {
     state.isMinimized = true
@@ -199,7 +204,9 @@ fun CustomWindow(
     val title = windowController.title ?: defaultTitle
     LaunchedEffect(title) { window.title = title }
     
-    Surface(shape = RoundedCornerShape(12.dp)) {
+    Surface(
+      shape = RoundedCornerShape(roundCorner.dp),
+    ) {
       CompositionLocalProvider(
         LocalWindowController provides windowController,
         LocalWindowState provides state,
@@ -219,6 +226,13 @@ fun CustomWindow(
         }
       }
     }
+    ToggleEffectBox(
+      isDark,
+      window,
+      state,
+      0,
+      triggerPosition,
+    )
   }
 }
 

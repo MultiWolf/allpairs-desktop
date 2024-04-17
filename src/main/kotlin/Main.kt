@@ -37,7 +37,6 @@ fun main() = application {
   val windowState = rememberWindowState(size = DpSize(windowMinWidth.dp, windowMinHeight.dp))
   val isSystemDark = isSystemInDarkTheme()
   var isDark by remember { mutableStateOf(isSystemDark) }
-  // val isMacEnv = EnvUtil.isOrderEnvType(EnvType.MAC)
   var triggerPosition by remember { mutableStateOf(Offset.Zero) }
   
   MaterialTheme(themes[isDark]!!) {
@@ -46,7 +45,10 @@ fun main() = application {
       windowMinWidth,
       windowMinHeight,
       true,
+      12,
       0,
+      isDark,
+      triggerPosition,
       { exitApplication() },
     ) {
       WindowCenter {

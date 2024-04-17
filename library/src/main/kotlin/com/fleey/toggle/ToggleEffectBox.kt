@@ -40,6 +40,7 @@ import kotlin.math.sqrt
 
 /**
  * A composable that creates a toggle effect box.
+ * forked from my another project: [ThemeToggle-like-Telegram](https://github.com/MultiWolf/ThemeToggle-like-Telegram)
  * @param isDark the dark mode state.
  * @param window the window to capture.
  * @param windowState the window state, use it to get the window size, then capture the window.
