@@ -182,23 +182,12 @@ fun CustomWindow(
   defaultIcon: Painter? = null,
   content: @Composable FrameWindowScope.() -> Unit,
 ) {
-  //two-way binding
   val windowController = remember { WindowController() }
   val center = windowController.center ?: {}
   
-  
-  val transparent: Boolean
-  val undecorated: Boolean
   val isAeroSnapSupported = CustomWindowDecorationAccessing.isSupported
-  if (isAeroSnapSupported) {
-    //we use aero snap
-    transparent = false
-    undecorated = false
-  } else {
-    //we decorate window and add our custom layout
-    transparent = true
-    undecorated = true
-  }
+  val transparent = !isAeroSnapSupported
+  val undecorated = !isAeroSnapSupported
   Window(
     state = state,
     transparent = transparent,
@@ -216,8 +205,6 @@ fun CustomWindow(
         LocalWindowState provides state,
       ) {
         val icon by rememberUpdatedState(windowController.icon)
-        val onIconClick by rememberUpdatedState(windowController.onIconClick)
-        // a window frame which totally rendered with compose
         CustomWindowFrame(
           onRequestMinimize = onRequestMinimize,
           onRequestClose = onCloseRequest,
@@ -234,7 +221,6 @@ fun CustomWindow(
     }
   }
 }
-
 
 class WindowController {
   var title by mutableStateOf(null as String?)

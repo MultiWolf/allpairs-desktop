@@ -16,6 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.application
@@ -24,8 +27,6 @@ import com.fleey.allpairs.data.config.windowMinHeight
 import com.fleey.allpairs.data.config.windowMinWidth
 import com.fleey.allpairs.ui.common.theme.themes
 import com.fleey.allpairs.ui.main.AppMain
-import com.fleey.allpairs.util.EnvType
-import com.fleey.allpairs.util.EnvUtil
 import com.fleey.customwindow.*
 
 /**
@@ -33,24 +34,21 @@ import com.fleey.customwindow.*
  * @date 2024-04-11 04:11
  */
 fun main() = application {
-  val state = rememberWindowState(
-    size = DpSize(
-      windowMinWidth.dp,
-      windowMinHeight.dp
-    )
-  )
-  val isDarkMode = isSystemInDarkTheme()
-  var isDark by remember { mutableStateOf(isDarkMode) }
-  val isMacEnv = EnvUtil.isOrderEnvType(EnvType.MAC)
+  val windowState = rememberWindowState(size = DpSize(windowMinWidth.dp, windowMinHeight.dp))
+  val isSystemDark = isSystemInDarkTheme()
+  var isDark by remember { mutableStateOf(isSystemDark) }
+  // val isMacEnv = EnvUtil.isOrderEnvType(EnvType.MAC)
+  var triggerPosition by remember { mutableStateOf(Offset.Zero) }
   
   MaterialTheme(themes[isDark]!!) {
     CustomWindow(
-      state,
+      windowState,
       windowMinWidth,
       windowMinHeight,
       true,
       0,
-      { exitApplication() }) {
+      { exitApplication() },
+    ) {
       WindowCenter {
         WindowTitle("")
         Row(Modifier.fillMaxWidth()) {
@@ -58,6 +56,7 @@ fun main() = application {
             imageVector = if (isDark) Icons.Rounded.LightMode else Icons.Rounded.DarkMode,
             modifier = Modifier
               .windowFrameItem("theme", HitSpots.OTHER_HIT_SPOT)
+              .onGloballyPositioned { triggerPosition = it.boundsInWindow().center }
               .clickable { isDark = !isDark }
               .padding(5.dp)
               .size(18.dp)
