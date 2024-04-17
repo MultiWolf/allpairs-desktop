@@ -38,21 +38,19 @@
 - [x] 导出成功询问打开
 - [x] 导出失败提示
 - [ ] 导入数据
-- [ ] 拖拽排序
 - [x] 侧滑 - 添加项
-- [ ] 呈现更详细、美观的错误提示
-- [ ] 增加动画
+- [x] 增加动画
   - [x] TopBar
   - [x] Pager
   - [x] 删除因子
-  - [ ] *（实验）浅深色主题切换过渡
+  - [x] *（实验）浅深色主题切换过渡
 
 # 起步
 
 1. 配置项目的 SDK 和 Gradle 为 [JBR](https://github.com/JetBrains/JetBrainsRuntime)（JetBrains
    Runtime）,
-2. 在你的当前环境调试，借助 `gradle run` 编译并运行 compose desktop,
-3. 若满意效果并想要打包，借助 `gradle package` 编译构建.
+2. 在你的当前环境调试，借助 `./gradlew run` 编译并运行 compose desktop,
+3. 若满意效果并想要打包，借助 `./gradlew package` 编译构建.
 
 > 注意：
 > 
