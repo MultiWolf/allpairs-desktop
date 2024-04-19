@@ -58,7 +58,6 @@ fun MainContent(
         ResultPage(
           isDark,
           paramList,
-          modifier,
           scope,
           resultBottomSheetState
         )
